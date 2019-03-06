@@ -11,8 +11,16 @@ class CourseViewsByCourse implements FromCollection
     /**
     * @return \Illuminate\Support\Collection
     */
+    public function __construct()
+    {
+        $end_timestamp = Carbon::now()->timestamp;
+        $start_timestamp = Carbon::now()->subMonths(3)->timestamp;
+    }
+
     public function collection()
     {
+        $end_timestamp = Carbon::now()->timestamp;
+        $start_timestamp = Carbon::now()->subMonths(3)->timestamp;
         //sql query for course views by course
         $collection = collect(DB::connection('mysql2')->select("select l.courseid, c.fullname, count(*) as 'Course Views'
         FROM mdl_logstore_standard_log l
@@ -24,6 +32,7 @@ class CourseViewsByCourse implements FromCollection
         AND l.action = 'viewed'
         AND l.courseid > 1
         AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
+        AND {$start_timestamp} AND {$end_timestamp}
         GROUP BY l.courseid
         "));
 
