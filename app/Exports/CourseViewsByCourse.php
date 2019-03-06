@@ -34,10 +34,9 @@ class CourseViewsByCourse implements FromCollection
         AND l.action = 'viewed'
         AND l.courseid > 1
         AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
-        AND {$start_timestamp} AND {$end_timestamp}
         GROUP BY l.courseid
         "));
-
+//AND {$start_timestamp} AND {$end_timestamp}
         return $this->formatCollection($collection);
     }
 

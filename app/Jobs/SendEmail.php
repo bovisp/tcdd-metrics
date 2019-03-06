@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use App\Exports\CourseViewsByCourse;
 use Illuminate\Support\Facades\Mail;
@@ -27,8 +28,8 @@ class SendEmail implements ShouldQueue
     public function __construct()
     {
         $this->dir = env('APP_ENV') === 'testing' ? 'test' : '';
-        $end_timestamp = Carbon::now()->timestamp;
-        $start_timestamp = Carbon::now()->subMonths(3)->timestamp;
+        //$end_timestamp = Carbon::now()->timestamp;
+        //$start_timestamp = Carbon::now()->subMonths(3)->timestamp;
     }
 
     /**
