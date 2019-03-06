@@ -26,14 +26,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        dd(Carbon::now());
+        $end_timestamp = Carbon::now()->timestamp;
+        $start_timestamp = Carbon::now()->subMonths(3)->timestamp;
+        //dd(Carbon::now()->subMonths(3)->timestamp);
+
         // $schedule->command('inspire')
         //          ->hourly();
 
         //call job
         // minute(0 - 59) hour(0 - 23) day(1 - 31) month(1 - 12) weekday(0 - 6) year(optional)
         // cron expression for Jan, Apr, Jul, Oct - 0 0 1 1,4,7,10 *
-        $schedule->job(new SendEmail)->cron('* 14 4 3 *');
+        //need to pass timespan to job
+        //$schedule->job(new SendEmail)->cron('* 14 4 3 *');
+        $schedule->job(new SendEmail)->everyMinute();
     }
 
     /**
