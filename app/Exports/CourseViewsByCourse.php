@@ -14,6 +14,8 @@ class CourseViewsByCourse implements FromCollection
     public function collection()
     {
         //sql query for course views by course
+        //inject start and end dates here in where clause for particular interval
+        //end date = now, start date = now - interval time span
         $collection = collect(DB::connection('mysql2')->select("select l.courseid, c.fullname, count(*) as 'Course Views'
         FROM mdl_logstore_standard_log l
         LEFT OUTER JOIN mdl_role_assignments a

@@ -37,7 +37,7 @@ class SendEmail implements ShouldQueue
     {
         
         //create exports class
-        Excel::store(new CourseViewsByCourse, $this->dir ? $this->dir . '/' . 'courseviewsbycourse.xlsx' : 'courseviewsbycourse.xlsx');
+        Excel::store(new CourseViewsByCourse, $this->dir ? $this->dir . '/' . 'course_views_by_course.xlsx' : 'course_views_by_course.xlsx');
 
         Mail::to('me@me.com')->send(new EmailCourseViewsByCourse);
     }
