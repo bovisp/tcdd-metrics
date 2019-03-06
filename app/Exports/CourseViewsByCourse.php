@@ -5,25 +5,26 @@ namespace App\Exports;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 
 class CourseViewsByCourse implements FromCollection
 {
     /**
     * @return \Illuminate\Support\Collection
     */
+
+    public $reportInterval;
+
     public function __construct()
     {
-        $end_timestamp = Carbon::now()->timestamp;
-        $start_timestamp = Carbon::now()->subMonths(3)->timestamp;
+        $this->reportInterval = app('reportInterval');
     }
 
     public function collection()
     {
-        $end_timestamp = Carbon::now()->timestamp;
-        $start_timestamp = Carbon::now()->subMonths(3)->timestamp;
-        //sql query for course views by course
-        //inject start and end dates here in where clause for particular interval
-        //end date = now, start date = now - interval time span
+        $endTimestamp = now()->timestamp;
+        $startTimestamp = $endTimestamp- $this->reportInterval;
+
         $collection = collect(DB::connection('mysql2')->select("select l.courseid, c.fullname, count(*) as 'Course Views'
         FROM mdl_logstore_standard_log l
         LEFT OUTER JOIN mdl_role_assignments a
@@ -34,9 +35,9 @@ class CourseViewsByCourse implements FromCollection
         AND l.action = 'viewed'
         AND l.courseid > 1
         AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
+        AND l.timecreated BETWEEN {$startTimestamp} AND {$endTimestamp}
         GROUP BY l.courseid
         "));
-//AND {$start_timestamp} AND {$end_timestamp}
         return $this->formatCollection($collection);
     }
 

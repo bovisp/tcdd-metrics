@@ -24,12 +24,9 @@ class SendEmail implements ShouldQueue
      *
      * @return void
      */
-    //constructor parameter for timespan
     public function __construct()
     {
         $this->dir = env('APP_ENV') === 'testing' ? 'test' : '';
-        //$end_timestamp = Carbon::now()->timestamp;
-        //$start_timestamp = Carbon::now()->subMonths(3)->timestamp;
     }
 
     /**
@@ -39,8 +36,6 @@ class SendEmail implements ShouldQueue
      */
     public function handle()
     {
-        
-        //create exports class
         Excel::store(new CourseViewsByCourse, $this->dir ? $this->dir . '/' . 'course_views_by_course.xlsx' : 'course_views_by_course.xlsx');
 
         Mail::to('me@me.com')->send(new EmailCourseViewsByCourse);

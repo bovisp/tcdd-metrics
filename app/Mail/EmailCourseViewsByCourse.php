@@ -29,6 +29,6 @@ class EmailCourseViewsByCourse extends Mailable
     public function build()
     {
         return $this->view('emails.courseviewsbycourse')
-            ->attachFromStorage('courseviewsbycourse.xlsx');
+            ->attachFromStorage('course_views_by_course.xlsx');
     }
 }
