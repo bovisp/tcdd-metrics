@@ -34,22 +34,14 @@ class Kernel extends ConsoleKernel
         //      e.g. cron expression for quarterly (Jan, Apr, Jul, Oct): '0 0 1 1,4,7,10 *'
 
         //quarterly
+        //$schedule->job(new GenerateReport)->cron('0 0 1 1,4,7,10 *');
+        $endDateTime = Carbon::now();
+        $startDateTime = Carbon::now()->subQuarter();
+        $schedule->job(new GenerateReport($startDateTime, $endDateTime))->everyMinute();
 
-        app()->bind('reportInterval', function () {
-            $now = Carbon::now();
-            $quarterlyInterval = $now->timestamp - $now->subQuarter()->timestamp;
-            return $quarterlyInterval;
-        });
-        $schedule->job(new GenerateReport)->cron('0 0 1 1,4,7,10 *');
-
+        //$startDateTime = $endDateTime->subYear();
         //annually
-        app()->bind('reportInterval', function () {
-            $now = Carbon::now();
-            $annualInterval = $now->timestamp - $now->subYear()->timestamp;
-            return $annualInterval;
-        });
-        $schedule->job(new GenerateReport)->cron('0 0 1 1 *');
-        
+        $schedule->job(new GenerateReport($startDateTime, $endDateTime))->cron('0 0 1 1 *');
     }
 
     /**

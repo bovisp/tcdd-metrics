@@ -13,18 +13,17 @@ class CourseViewsByCourse implements FromCollection
     * @return \Illuminate\Support\Collection
     */
 
-    public $reportInterval;
+    protected $startTimestamp;
+    protected $endTimestamp;
 
-    public function __construct()
+    public function __construct($startDateTime, $endDateTime)
     {
-        $this->reportInterval = app('reportInterval');
+        $this->startTimestamp = $startDateTime->timestamp;
+        $this->endTimestamp = $endDateTime->timestamp;
     }
 
     public function collection()
     {
-        $endTimestamp = now()->timestamp;
-        $startTimestamp = $endTimestamp- $this->reportInterval;
-
         $collection = collect(DB::connection('mysql2')->select("select l.courseid, c.fullname, count(*) as 'Course Views'
         FROM mdl_logstore_standard_log l
         LEFT OUTER JOIN mdl_role_assignments a
@@ -35,7 +34,7 @@ class CourseViewsByCourse implements FromCollection
         AND l.action = 'viewed'
         AND l.courseid > 1
         AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
-        AND l.timecreated BETWEEN {$startTimestamp} AND {$endTimestamp}
+        AND l.timecreated BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
         GROUP BY l.courseid
         "));
         return $this->formatCollection($collection);
@@ -51,7 +50,6 @@ class CourseViewsByCourse implements FromCollection
                 $x->fullname = preg_replace("/{mlang en}|{mlang} {mlang fr}(.*){mlang}/", "", $x->fullname);
             }
         });
-
         return $formattedCollection;
     }
 }
