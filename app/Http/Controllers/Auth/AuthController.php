@@ -6,7 +6,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\RegisterFormRequest;
+use App\Http\Requests\Auth\{RegisterFormRequest, LoginFormRequest};
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {    
@@ -21,7 +22,7 @@ class AuthController extends Controller
 
         $token = JWTAuth::attempt($request->only('email', 'password'));
 
-        return responses()->json([
+        return response()->json([
             'data' => $user,
             'meta' => [
                 'token' => $token
@@ -29,7 +30,29 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function login() {
+    public function login(LoginFormRequest $request) {
+        try {
+            if (!$token = JWTAuth::attempt($request->only('email', 'password'))) {
+                return response()->json([
+                    'errors' => [
+                        'root' => 'Could not sign you in with those details.'
+                    ]
+                    ], 401);
+            }
+        } catch (JWTException $e) {
+            return response()->json([
+                'errors' => [
+                    'root' => 'Failed.'
+                ]
+                ], $e->getStatusCode());
+        }
+
+        return response()->json([
+            'data' => $request->user(),
+            'meta' => [
+                'token' => $token
+            ]
+        ], 200);
 
     }
 }
