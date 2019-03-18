@@ -15,16 +15,14 @@ class CourseViewsByCourse implements FromCollection
 
     protected $startTimestamp;
     protected $endTimestamp;
+    protected $courseViewsByCourseQuery;
 
     public function __construct($startDateTime, $endDateTime)
     {
         $this->startTimestamp = $startDateTime->timestamp;
         $this->endTimestamp = $endDateTime->timestamp;
-    }
 
-    public function collection()
-    {
-        $collection = collect(DB::connection('mysql2')->select("select l.courseid, c.fullname, count(*) as 'Course Views'
+        $this->courseViewsByCourseQuery = "select l.courseid, c.fullname, count(*) as 'Course Views'
         FROM mdl_logstore_standard_log l
         LEFT OUTER JOIN mdl_role_assignments a
             ON l.contextid = a.contextid
@@ -35,8 +33,12 @@ class CourseViewsByCourse implements FromCollection
         AND l.courseid > 1
         AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
         AND l.timecreated BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
-        GROUP BY l.courseid
-        "));
+        GROUP BY l.courseid";
+    }
+
+    public function collection()
+    {
+        $collection = collect(DB::connection('mysql2')->select($this->courseViewsByCourseQuery));
         return $this->formatCollection($collection);
     }
 

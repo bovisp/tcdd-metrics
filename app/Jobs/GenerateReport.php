@@ -32,6 +32,7 @@ class GenerateReport implements ShouldQueue
         $this->startDateTime = $startDateTime;
         $this->endDateTime = $endDateTime;
         $this->dir = env('APP_ENV') === 'testing' ? 'test' : '';
+        
     }
 
     /**
