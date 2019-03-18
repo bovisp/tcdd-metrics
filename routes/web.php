@@ -14,3 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('badge-languages', 'BadgeLanguageController@store');
+
+Route::delete('badge-languages/{badgeLanguage}', 'BadgeLanguageController@destroy');
+
+Route::put('badge-languages/{badgeLanguage}', 'BadgeLanguageController@update');
