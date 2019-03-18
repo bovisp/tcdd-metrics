@@ -18,4 +18,21 @@ class BadgeLanguageController extends Controller
             'language_id' => request('language_id')
         ]);
     }
+
+    public function update($badgeLanguageId) {
+        request()->validate([
+            'language_id' => 'exists:languages,id'
+        ]);
+
+        DB::connection('mysql')->table('badge_language')->where(['id' => $badgeLanguageId])
+        ->update([
+            'language_id' => request('language_id')
+        ]);
+    }
+
+    public function destroy($badgeLanguageId) {
+        DB::connection('mysql')->table('badge_language')->delete([
+            'id' => $badgeLanguageId
+        ]);
+    }
 }

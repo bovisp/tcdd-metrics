@@ -6,8 +6,10 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class CourseViewsByCourse implements FromCollection
+class CourseViewsByCourse implements FromCollection, WithHeadings, ShouldAutoSize
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -22,7 +24,7 @@ class CourseViewsByCourse implements FromCollection
         $this->startTimestamp = $startDateTime->timestamp;
         $this->endTimestamp = $endDateTime->timestamp;
 
-        $this->courseViewsByCourseQuery = "select l.courseid, c.fullname, count(*) as 'Course Views'
+        $this->courseViewsByCourseQuery = "select l.courseid, c.fullname 'englishname', c.fullname 'frenchname', count(*) as 'Course Views'
         FROM mdl_logstore_standard_log l
         LEFT OUTER JOIN mdl_role_assignments a
             ON l.contextid = a.contextid
@@ -45,13 +47,31 @@ class CourseViewsByCourse implements FromCollection
     private function formatCollection(Collection $collection)
     {
         $formattedCollection = $collection->each(function ($x) {
-            $original = $x->fullname;
-            $x->fullname = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->fullname));
+            //english course name formatting
+            $original = $x->englishname;
+            $x->englishname = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->englishname));
             
-            if($original === $x->fullname) { //only run the second preg_replace if the first did nothing
-                $x->fullname = trim(preg_replace("/{mlang en}|{mlang} {mlang fr}(.*){mlang}/", "", $x->fullname));
+            if($original === $x->englishname) { //only run the second preg_replace if the first did nothing
+                $x->englishname = trim(preg_replace("/{mlang en}|{mlang} {mlang fr}(.*){mlang}/", "", $x->englishname));
+            }
+            //french course name formatting
+            $original = $x->frenchname;
+            $x->frenchname = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">(.*)<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $x->frenchname));
+            
+            if($original === $x->frenchname) { //only run the second preg_replace if the first did nothing
+                $x->frenchname = trim(preg_replace("/{mlang en}(.*){mlang} {mlang fr}|{mlang}/", "", $x->frenchname));
             }
         });
         return $formattedCollection;
+    }
+
+    public function headings(): array
+    {
+        return [
+            'Id',
+            'English Course Name',
+            'French Course Name',
+            'Course Views'
+        ];
     }
 }
