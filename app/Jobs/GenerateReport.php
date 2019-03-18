@@ -18,8 +18,8 @@ class GenerateReport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $dir;
-    protected $startDateTime;
-    protected $endDateTime;
+    protected $startTimestamp;
+    protected $endTimestamp;
 
 
     /**
@@ -27,10 +27,10 @@ class GenerateReport implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($startDateTime, $endDateTime)
+    public function __construct($startTimestamp, $endTimestamp)
     {
-        $this->startDateTime = $startDateTime;
-        $this->endDateTime = $endDateTime;
+        $this->startTimestamp = $startTimestamp;
+        $this->endTimestamp = $endTimestamp;
         $this->dir = env('APP_ENV') === 'testing' ? 'test' : '';
         
     }
@@ -42,8 +42,7 @@ class GenerateReport implements ShouldQueue
      */
     public function handle()
     {
-        Excel::store(new CourseViewsByCourse($this->startDateTime, $this->endDateTime), $this->dir ? $this->dir . '/' . 'course_views_by_course.xlsx' : 'course_views_by_course.xlsx');
-
-        Mail::to('me@me.com')->send(new EmailCourseViewsByCourse);
+        Excel::store(new CourseViewsByCourse($this->startTimestamp, $this->endTimestamp), $this->dir ? $this->dir . '/' . 'course_views_by_course.xlsx' : 'course_views_by_course.xlsx');
+        Mail::to('me@me.com')->send(new EmailCourseViewsByCourse); //pass in startdate and enddate here too?
     }
 }
