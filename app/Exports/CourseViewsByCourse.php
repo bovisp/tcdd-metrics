@@ -44,10 +44,10 @@ class CourseViewsByCourse implements FromCollection
     {
         $formattedCollection = $collection->each(function ($x) {
             $original = $x->fullname;
-            $x->fullname = preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->fullname);
+            $x->fullname = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->fullname));
             
             if($original === $x->fullname) { //only run the second preg_replace if the first did nothing
-                $x->fullname = preg_replace("/{mlang en}|{mlang} {mlang fr}(.*){mlang}/", "", $x->fullname);
+                $x->fullname = trim(preg_replace("/{mlang en}|{mlang} {mlang fr}(.*){mlang}/", "", $x->fullname));
             }
         });
         return $formattedCollection;
