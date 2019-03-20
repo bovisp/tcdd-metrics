@@ -35,4 +35,8 @@ class BadgeLanguageController extends Controller
             'id' => $badgeLanguageId
         ]);
     }
+
+    public function index() {
+        
+    }
 }
