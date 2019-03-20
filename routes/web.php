@@ -20,3 +20,9 @@ Route::post('badge-languages', 'BadgeLanguageController@store');
 Route::delete('badge-languages/{badgeLanguage}', 'BadgeLanguageController@destroy');
 
 Route::put('badge-languages/{badgeLanguage}', 'BadgeLanguageController@update');
+
+Route::get('badge-languages', 'BadgeLanguageController@index');
+
+//show
+//edit
+//create
