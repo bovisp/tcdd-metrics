@@ -13,6 +13,29 @@ class ManageBadgeLanguagesTest extends TestCase
 {
     use DatabaseMigrations;
     /** @test */
+    public function a_user_can_view_their_badge_languages() {
+        $this->withoutExceptionHandling();
+        //create a language
+        $language = factory(Language::class)->create();
+        //create a badge
+        //$badge = factory(Badge::class)->create();
+        $badge = new \stdClass;
+        $badge->id = 1;
+
+        $attributes = [
+            'language_id' => $language->id,
+            'badge_id' => $badge->id
+        ];
+
+        $this->post('/badge-languages', $attributes);
+
+        $this->get('/badge-languages')->assertJsonFragment([
+            'language_id' => $language->id,
+            'badge_id' => $badge->id]
+        );
+    }
+
+    /** @test */
     public function a_user_can_assign_a_language_to_a_badge()
     {
         $this->withoutExceptionHandling();
@@ -27,7 +50,7 @@ class ManageBadgeLanguagesTest extends TestCase
             'language_id' => $language->id,
             'badge_id' => $badge->id
         ];
-        //post to badge-languages...or update badges/{id}...?
+
         $this->post('/badge-languages', $attributes);
 
         $this->assertDatabaseHas('badge_language', $attributes);
