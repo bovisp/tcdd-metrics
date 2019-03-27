@@ -37,6 +37,6 @@ class BadgeLanguageController extends Controller
     }
 
     public function index() {
-        
+        return DB::connection('mysql')->table('badge_language')->select();
     }
 }
