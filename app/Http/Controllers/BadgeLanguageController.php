@@ -14,8 +14,8 @@ class BadgeLanguageController extends Controller
         ]);
 
         DB::connection('mysql')->table('badge_language')->insert([
-            'badge_id' => request('badge_id'), 
-            'language_id' => request('language_id')
+            'badge_id' => request('badge_id'),
+            'language_id' => request('language_id'),
         ]);
     }
 
@@ -37,6 +37,10 @@ class BadgeLanguageController extends Controller
     }
 
     public function index() {
-        return json_encode(DB::connection('mysql')->table('badge_language')->get());
+        return DB::connection('mysql')->table('badge_language')
+        ->join('moodledb.mdl_badge', 'badge_language.badge_id', '=', 'moodledb.mdl_badge.id')
+        ->join('languages', 'badge_language.language_id', '=', 'languages.id')
+        ->select('badge_language.id', 'moodledb.mdl_badge.name as badge_name', 'languages.name as language_name')
+        ->get();
     }
 }

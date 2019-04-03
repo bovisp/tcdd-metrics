@@ -16,15 +16,21 @@ class ManageBadgeLanguagesTest extends TestCase
     public function a_user_can_view_their_badge_languages() {
         $this->withoutExceptionHandling();
         //create a language
-        $language = factory(Language::class)->create();
+        //$language = factory(Language::class)->create();
+        $language = new \stdClass;
+        $language->id = 1;
+        $language->name = 'English';
         //create a badge
         //$badge = factory(Badge::class)->create();
         $badge = new \stdClass;
         $badge->id = 1;
+        $badge->name = 'test badge';
 
         $attributes = [
             'language_id' => $language->id,
-            'badge_id' => $badge->id
+            'language_name' => $language->name,
+            'badge_id' => $badge->id,
+            'badge_name' => $badge->name
         ];
 
         $this->post('/badge-languages', $attributes);
