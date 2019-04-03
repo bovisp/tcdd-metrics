@@ -23,6 +23,8 @@ Route::group(['middleware' => 'jwt.auth'], function(){
     Route::post('/logout', 'Auth\AuthController@logout');
 });
 
+Route::post('/badge-languages', 'BadgeLanguageController@store');
+
 Route::get('/badge-languages', 'BadgeLanguageController@index');
 
 Route::get('/languages', 'LanguageController@index');

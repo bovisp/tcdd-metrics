@@ -17,7 +17,7 @@ class CreateBadgeLanguage extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->unsignedInteger('badge_id')->unique();
-            $table->unsignedInteger('language_id')->unique();
+            $table->unsignedInteger('language_id');
 
             $table->foreign('language_id')->references('id')->on('languages');
         });

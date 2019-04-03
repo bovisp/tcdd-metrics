@@ -17,6 +17,8 @@ class BadgeLanguageController extends Controller
             'badge_id' => request('badge_id'),
             'language_id' => request('language_id'),
         ]);
+
+        return 'Badge successfully assigned a language.';
     }
 
     public function update($badgeLanguageId) {
