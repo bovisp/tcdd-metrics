@@ -25,6 +25,8 @@ Route::group(['middleware' => 'jwt.auth'], function(){
 
 Route::post('/badge-languages', 'BadgeLanguageController@store');
 
+Route::put('badge-languages/{badgeLanguage}', 'BadgeLanguageController@update');
+
 Route::get('/badge-languages', 'BadgeLanguageController@index');
 
 Route::get('/languages', 'LanguageController@index');

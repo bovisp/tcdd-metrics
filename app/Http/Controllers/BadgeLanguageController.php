@@ -28,8 +28,11 @@ class BadgeLanguageController extends Controller
 
         DB::connection('mysql')->table('badge_language')->where(['id' => $badgeLanguageId])
         ->update([
+            'badge_id' => request('badge_id'),
             'language_id' => request('language_id')
         ]);
+
+        return 'Successfully updated the badge\'s language.';
     }
 
     public function destroy($badgeLanguageId) {
@@ -42,7 +45,7 @@ class BadgeLanguageController extends Controller
         return DB::connection('mysql')->table('badge_language')
         ->join('moodledb.mdl_badge', 'badge_language.badge_id', '=', 'moodledb.mdl_badge.id')
         ->join('languages', 'badge_language.language_id', '=', 'languages.id')
-        ->select('badge_language.id', 'moodledb.mdl_badge.name as badge_name', 'languages.name as language_name')
+        ->select('badge_language.id', 'moodledb.mdl_badge.id as badge_id', 'moodledb.mdl_badge.name as badge_name', 'languages.id as language_id', 'languages.name as language_name')
         ->orderBy('badge_language.id', 'asc')
         ->get();
     }
