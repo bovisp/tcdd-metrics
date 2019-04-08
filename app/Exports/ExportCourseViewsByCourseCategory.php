@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class CourseViewsByCourseCategory implements FromCollection, WithHeadings, ShouldAutoSize
+class ExportCourseViewsByCourseCategory implements FromCollection, WithHeadings, ShouldAutoSize
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -17,10 +17,10 @@ class CourseViewsByCourseCategory implements FromCollection, WithHeadings, Shoul
     protected $startTimestamp;
     protected $endTimestamp;
 
-    public function __construct($startDateTime, $endDateTime)
+    public function __construct($startTimestamp, $endTimestamp)
     {
-        $this->startTimestamp = $startDateTime->timestamp;
-        $this->endTimestamp = $endDateTime->timestamp;
+        $this->startTimestamp = $startTimestamp;
+        $this->endTimestamp = $endTimestamp;
     }
 
     public function collection()

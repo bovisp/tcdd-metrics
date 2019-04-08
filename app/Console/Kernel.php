@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Jobs\GenerateReport;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\CompletionsByBadgeReport;
 
 class Kernel extends ConsoleKernel
 {
@@ -35,13 +36,13 @@ class Kernel extends ConsoleKernel
 
         //quarterly
         //$schedule->job(new GenerateReport)->cron('0 0 1 1,4,7,10 *');
-        $endTimestamp = Carbon::now()->timestamp;
-        $startTimestamp = Carbon::now()->subQuarter()->timestamp; //set interval here
-        $schedule->job(new GenerateReport($startTimestamp, $endTimestamp))->everyMinute();
+        $subQuarterTimestamp = Carbon::now()->subYear()->timestamp; //set interval here
+        $schedule->job(new GenerateReport($subQuarterTimestamp, 0))->everyMinute();
 
         //$startDateTime = Carbon::now()->subYear();
         //annually
-        $schedule->job(new GenerateReport($startTimestamp, $endTimestamp))->cron('0 0 1 1 *');
+        $subYearTimestamp = Carbon::now()->subYear()->timestamp;
+        $schedule->job(new GenerateReport($subYearTimestamp, 0))->cron('0 0 1 1 *');
     }
 
     /**
