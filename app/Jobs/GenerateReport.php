@@ -29,14 +29,11 @@ class GenerateReport implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($startTimestamp, $endTimestamp)
+    public function __construct($startTimestamp, $endTimestamp = null)
     {
         $this->startTimestamp = $startTimestamp;
-        if($endTimestamp === 0) {
-            $this->endTimestamp = Carbon::now()->timestamp;
-        } else {
-            $this->endTimestamp = $endTimestamp;
-        }
+        $this->endTimestamp = $endTimestamp == null ? Carbon::now()->timestamp : $endTimestamp;
+        $this->endTimestamp = $endTimestamp;
         $this->dir = env('APP_ENV') === 'testing' ? 'test' : '';
         
     }

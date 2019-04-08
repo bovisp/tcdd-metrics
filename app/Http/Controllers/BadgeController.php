@@ -13,6 +13,6 @@ class BadgeController extends Controller
             return $assignedBadgeId->badge_id;
         })->toArray();
 
-        return json_encode(DB::connection('mysql2')->table('mdl_badge')->whereNotIn('id', $assignedBadgeIds)->get());
+        return DB::connection('mysql2')->table('mdl_badge')->whereNotIn('id', $assignedBadgeIds)->orderBy('name', 'asc')->get();
     }
 }

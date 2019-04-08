@@ -43,6 +43,7 @@ class BadgeLanguageController extends Controller
         ->join('moodledb.mdl_badge', 'badge_language.badge_id', '=', 'moodledb.mdl_badge.id')
         ->join('languages', 'badge_language.language_id', '=', 'languages.id')
         ->select('badge_language.id', 'moodledb.mdl_badge.name as badge_name', 'languages.name as language_name')
+        ->orderBy('badge_language.id', 'asc')
         ->get();
     }
 }
