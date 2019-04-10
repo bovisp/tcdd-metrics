@@ -5,14 +5,12 @@ namespace App\Exports;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class ExportCompletionsByBadge implements FromCollection, WithHeadings, ShouldAutoSize
+class ExportCompletionsByBadge implements WithMultipleSheets
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
+    use Exportable;
 
     protected $startTimestamp;
     protected $endTimestamp;
@@ -23,30 +21,12 @@ class ExportCompletionsByBadge implements FromCollection, WithHeadings, ShouldAu
         $this->endTimestamp = $endTimestamp;
     }
 
-    public function collection()
+    public function sheets(): array
     {
-        $query = "SELECT bi.badgeid as 'Id', b.name as 'Badge Name', count(*) as 'Badges Issued'
-        FROM `mdl_badge_issued` bi
-        INNER JOIN `mdl_badge` b ON bi.badgeid = b.id
-        WHERE bi.badgeid IN (44,45,8,22,11,12,27,28,34,31,43,42)
-        AND bi.dateissued BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
-        GROUP BY bi.badgeid";
+        $sheets = [];
 
-        $collection = collect(DB::connection('mysql2')->select($query));
-        return $collection;
-    }
+        $sheets[] = new CompletionsByBadgeSheet($this->startTimestamp, $this->endTimestamp);
 
-    private function formatCollection(Collection $collection)
-    {
-
-    }
-
-    public function headings(): array
-    {
-        return [
-            'Id',
-            'Badge Name',
-            'Badges Issued'
-        ];
+        return $sheets;
     }
 }
