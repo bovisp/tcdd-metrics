@@ -30,15 +30,14 @@ class BadgeLanguageController extends Controller
         $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')->where(['badgeid' => $badgeId])->exists();
 
         if($badgeIssued) {
-            return 'Could not update this badge\'s language. Badge has already been issued.';
+            return response('Could not update this badge\'s language. Badge has already been issued.', 422);
         } else {
             DB::connection('mysql')->table('badge_language')->where(['id' => $badgeLanguageId])
             ->update([
                 'badge_id' => request('badge_id'),
                 'language_id' => request('language_id')
             ]);
-
-            return 'Successfully updated this badge\'s language.';
+            return response('Successfully updated this badge\'s language.', 200);
         }
     }
 
@@ -47,12 +46,12 @@ class BadgeLanguageController extends Controller
         $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')->where(['badgeid' => $badgeId])->exists();
 
         if($badgeIssued) {
-            return 'Could not delete this badge\'s language. Badge has already been issued.';
+            return response('Could not delete this badge\'s language. Badge has already been issued.', 422);
         } else {
             DB::connection('mysql')->table('badge_language')->delete([
                 'id' => $badgeLanguageId
             ]);
-            return 'Successfully deleted this badge\'s language.';
+            return response('Successfully deleted this badge\'s language.', 200);
         }
     }
 
