@@ -26,19 +26,34 @@ class BadgeLanguageController extends Controller
             'language_id' => 'exists:languages,id'
         ]);
 
-        DB::connection('mysql')->table('badge_language')->where(['id' => $badgeLanguageId])
-        ->update([
-            'badge_id' => request('badge_id'),
-            'language_id' => request('language_id')
-        ]);
+        $badgeId = DB::connection('mysql')->table('badge_language')->where(['id' => $badgeLanguageId])->select('badge_id')->get()->map(function ($badgeLanguage) {return $badgeLanguage->badge_id;})[0];
+        $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')->where(['badgeid' => $badgeId])->exists();
 
-        return 'Successfully updated the badge\'s language.';
+        if($badgeIssued) {
+            return 'Could not update this badge\'s language. Badge has already been issued.';
+        } else {
+            DB::connection('mysql')->table('badge_language')->where(['id' => $badgeLanguageId])
+            ->update([
+                'badge_id' => request('badge_id'),
+                'language_id' => request('language_id')
+            ]);
+
+            return 'Successfully updated this badge\'s language.';
+        }
     }
 
     public function destroy($badgeLanguageId) {
-        DB::connection('mysql')->table('badge_language')->delete([
-            'id' => $badgeLanguageId
-        ]);
+        $badgeId = DB::connection('mysql')->table('badge_language')->where(['id' => $badgeLanguageId])->select('badge_id')->get()->map(function ($badgeLanguage) {return $badgeLanguage->badge_id;})[0];
+        $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')->where(['badgeid' => $badgeId])->exists();
+
+        if($badgeIssued) {
+            return 'Could not delete this badge\'s language. Badge has already been issued.';
+        } else {
+            DB::connection('mysql')->table('badge_language')->delete([
+                'id' => $badgeLanguageId
+            ]);
+            return 'Successfully deleted this badge\'s language.';
+        }
     }
 
     public function index() {
