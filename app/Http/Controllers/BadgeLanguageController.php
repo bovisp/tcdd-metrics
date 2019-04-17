@@ -36,6 +36,9 @@ class BadgeLanguageController extends Controller
             ->where(['badgeid' => $badgeId])
             ->exists();
 
+        //temporarily turning this check off
+        $badgeIssued = null;
+
         if($badgeIssued) {
             return response("Could not update this badge's language. Badge has already been issued.", 422);
         } else {

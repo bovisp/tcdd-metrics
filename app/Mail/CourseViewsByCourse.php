@@ -16,9 +16,11 @@ class CourseViewsByCourse extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    protected $interval;
+
+    public function __construct($interval)
     {
-        //
+        $this->interval = $interval;
     }
 
     /**
@@ -29,6 +31,6 @@ class CourseViewsByCourse extends Mailable
     public function build()
     {
         return $this->view('emails.courseviewsbycourse')
-            ->attachFromStorage('course_views_by_course.xlsx');
+            ->attachFromStorage('course_views_by_course_' . $this->interval . '.xlsx');
     }
 }

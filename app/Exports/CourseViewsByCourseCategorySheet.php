@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
+class CourseViewsByCourseCategorySheet implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -28,15 +28,19 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
 
     public function collection()
     {
-        $query = "SELECT c.id as 'Course Id', c.fullname as 'englishname', c.fullname as 'frenchname', l.name as 'Language', count(bi.badgeid) as 'Badges Issued'
-        FROM `moodledb`.`mdl_badge_issued` bi
-        INNER JOIN `moodledb`.`mdl_badge` b ON bi.badgeid = b.id
-        INNER JOIN `moodledb`.`mdl_course` c ON b.courseid = c.id
-        INNER JOIN `tcdd-metrics`.`badge_language` bl ON bi.badgeid = bl.badge_id
-        INNER JOIN `tcdd-metrics`.`languages` l ON bl.language_id = l.id
-        WHERE bi.badgeid IN (44,45,8,22,11,12,27,28,34,31,43,42)
-        AND bi.dateissued BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
-        GROUP BY bi.badgeid";
+        $query = "select cc.id, cc.name 'englishname', cc.name 'frenchname', count(*) as 'course_views'
+            FROM `mdl_logstore_standard_log` l
+            LEFT OUTER JOIN `mdl_role_assignments` a
+                ON l.contextid = a.contextid
+                AND l.userid = a.userid
+            INNER JOIN `mdl_course` c ON l.courseid = c.id
+            INNER JOIN `mdl_course_categories` cc on c.category = cc.id
+            WHERE l.target = 'course'
+            AND l.action = 'viewed'
+            AND l.courseid > 1
+            AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
+            AND l.timecreated BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
+            GROUP BY c.category";
 
         $collection = collect(DB::connection('mysql2')->select($query));
         return $this->formatCollection($collection);
@@ -67,16 +71,15 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
     public function headings(): array
     {
         return [
-            'Course Id',
-            'English Course Name',
-            'French Course Name',
-            'Badge Language',
-            'Completions'
+            'Category Id',
+            'English Course Category Name',
+            'French Course Category Name',
+            'Course Views'
         ];
     }
 
     public function title(): string
     {
-        return 'Completions By Badge';
+        return 'Views By Course Category';
     }
 }

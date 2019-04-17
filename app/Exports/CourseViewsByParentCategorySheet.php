@@ -2,14 +2,14 @@
 
 namespace App\Exports;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
+class CourseViewsByParentCategorySheet implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -28,15 +28,18 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
 
     public function collection()
     {
-        $query = "SELECT c.id as 'Course Id', c.fullname as 'englishname', c.fullname as 'frenchname', l.name as 'Language', count(bi.badgeid) as 'Badges Issued'
-        FROM `moodledb`.`mdl_badge_issued` bi
-        INNER JOIN `moodledb`.`mdl_badge` b ON bi.badgeid = b.id
-        INNER JOIN `moodledb`.`mdl_course` c ON b.courseid = c.id
-        INNER JOIN `tcdd-metrics`.`badge_language` bl ON bi.badgeid = bl.badge_id
-        INNER JOIN `tcdd-metrics`.`languages` l ON bl.language_id = l.id
-        WHERE bi.badgeid IN (44,45,8,22,11,12,27,28,34,31,43,42)
-        AND bi.dateissued BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
-        GROUP BY bi.badgeid";
+        $query = "SELECT IFNULL(cc.parent, 'null') as 'Id', IFNULL((select name from `mdl_course_categories` where id = cc.parent), 'null') as 'englishname', IFNULL((select name from `mdl_course_categories` where id = cc.parent), 'null') as 'frenchname', count(*) as 'views'
+            FROM `mdl_logstore_standard_log` l
+            LEFT OUTER JOIN `mdl_role_assignments` a
+                ON l.contextid = a.contextid
+                AND l.userid = a.userid
+            INNER JOIN `mdl_course` c ON l.courseid = c.id
+            INNER JOIN `mdl_course_categories` cc on c.category = cc.id
+            WHERE l.target = 'course'
+            AND l.action = 'viewed'
+            AND l.courseid > 1
+            AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
+            GROUP BY cc.parent";
 
         $collection = collect(DB::connection('mysql2')->select($query));
         return $this->formatCollection($collection);
@@ -53,9 +56,9 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
                 $x->englishname = trim(preg_replace("/{mlang en}|{mlang}{mlang fr}(.*){mlang}|{mlang} {mlang fr}(.*){mlang}/", "", $x->englishname));
             }
             
-            //french course name formatting
+            //french course name formattingP
             $original = $x->frenchname;
-            $x->frenchname = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">(.*)<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $x->frenchname));
+            $x->frenchname = trim(preg_replace("/<span lang=\"en\" clasPs=\"multilang\">(.*)<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $x->frenchname));
             
             if($original === $x->frenchname) { //only run the second preg_replace if the first did nothing
                 $x->frenchname = trim(preg_replace("/{mlang en}(.*){mlang}{mlang fr}|{mlang en}(.*){mlang} {mlang fr}|{mlang}/", "", $x->frenchname));
@@ -67,16 +70,15 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
     public function headings(): array
     {
         return [
-            'Course Id',
-            'English Course Name',
-            'French Course Name',
-            'Badge Language',
-            'Completions'
+            'Category Id',
+            'English Parent Category Name',
+            'French Parent Category Name',
+            'Course Views'
         ];
     }
 
     public function title(): string
     {
-        return 'Completions By Badge';
+        return 'Views By Parent Category';
     }
 }

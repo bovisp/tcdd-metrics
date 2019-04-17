@@ -22,17 +22,18 @@ class GenerateReport implements ShouldQueue
     protected $dir;
     protected $startTimestamp;
     protected $endTimestamp;
-
+    protected $interval;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($startTimestamp, $endTimestamp = null)
+    public function __construct($startTimestamp, $endTimestamp = null, $interval)
     {
         $this->startTimestamp = $startTimestamp;
         $this->endTimestamp = $endTimestamp === null ? Carbon::now()->timestamp : $endTimestamp;
+        $this->interval = $interval;
         $this->dir = env('APP_ENV') === 'testing' ? 'test' : '';
         
     }
@@ -44,9 +45,9 @@ class GenerateReport implements ShouldQueue
      */
     public function handle()
     {
-        Excel::store(new ExportCourseViewsByCourse($this->startTimestamp, $this->endTimestamp), $this->dir ? $this->dir . '/' . 'course_views_by_course.xlsx' : 'course_views_by_course.xlsx');
-        Mail::to('me@me.com')->send(new CourseViewsByCourse); //pass in startdate and enddate here too?
-        Excel::store(new ExportCompletionsByBadge($this->startTimestamp, $this->endTimestamp), $this->dir ? $this->dir . '/' . 'completions_by_badge.xlsx' : 'completions_by_badge.xlsx');
-        Mail::to('me@me.com')->send(new CompletionsByBadge); //pass in startdate and enddate here too?
+        Excel::store(new ExportCourseViewsByCourse($this->startTimestamp, $this->endTimestamp, $this->interval), $this->dir ? $this->dir . '/' . 'course_views_by_course_' . $this->interval . '.xlsx' : 'course_views_by_course_' . $this->interval . '.xlsx');
+        Mail::to('me@me.com')->send(new CourseViewsByCourse($this->interval));
+        Excel::store(new ExportCompletionsByBadge($this->startTimestamp, $this->endTimestamp, $this->interval), $this->dir ? $this->dir . '/' . 'completions_by_badge_' . $this->interval . '.xlsx' : 'completions_by_badge_' . $this->interval . '.xlsx');
+        Mail::to('me@me.com')->send(new CompletionsByBadge($this->interval));
     }
 }
