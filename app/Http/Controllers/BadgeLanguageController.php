@@ -22,57 +22,56 @@ class BadgeLanguageController extends Controller
     }
 
     public function update($badgeLanguageId) {
+        //only check for badge issued if query paramter is NOT 'confirm'
         request()->validate([
             'language_id' => 'exists:languages,id'
         ]);
-
-        $badgeId = DB::connection('mysql')->table('badge_language')
+        if(request()->query('confirm') === 'false') {
+            $badgeId = DB::connection('mysql')->table('badge_language')
             ->where(['id' => $badgeLanguageId])
             ->select('badge_id')
             ->get()
             ->map(function ($badgeLanguage) {return $badgeLanguage->badge_id;})[0];
 
-        $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')
-            ->where(['badgeid' => $badgeId])
-            ->exists();
+            $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')
+                ->where(['badgeid' => $badgeId])
+                ->exists();
 
-        //temporarily turning this check off
-        $badgeIssued = null;
-
-        if($badgeIssued) {
-            return response("Could not update this badge's language. Badge has already been issued.", 422);
-        } else {
-            DB::connection('mysql')->table('badge_language')
-            ->where(['id' => $badgeLanguageId])
-            ->update([
-                'badge_id' => request('badge_id'),
-                'language_id' => request('language_id')
-            ]);
-
-            return response("Successfully updated this badge's language.", 200);
+            if($badgeIssued) {
+                return response("Badge has already been issued.", 422);
+            }
         }
+        DB::connection('mysql')->table('badge_language')
+        ->where(['id' => $badgeLanguageId])
+        ->update([
+            'badge_id' => request('badge_id'),
+            'language_id' => request('language_id')
+        ]);
+
+        return response("Successfully updated this badge's language.", 200);
     }
 
     public function destroy($badgeLanguageId) {
-        $badgeId = DB::connection('mysql')->table('badge_language')
+        if(request()->query('confirm') === 'false') {
+            $badgeId = DB::connection('mysql')->table('badge_language')
             ->where(['id' => $badgeLanguageId])
             ->select('badge_id')
             ->get()
             ->map(function ($badgeLanguage) {return $badgeLanguage->badge_id;})[0];
 
-        $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')
-            ->where(['badgeid' => $badgeId])
-            ->exists();
+            $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')
+                ->where(['badgeid' => $badgeId])
+                ->exists();
 
-        if($badgeIssued) {
-            return response("Could not delete this badge's language. Badge has already been issued.", 422);
-        } else {
-            DB::connection('mysql')->table('badge_language')
-                ->delete([
-                    'id' => $badgeLanguageId
-                ]);
-            return response('Successfully deleted this badge\'s language.', 200);
+            if($badgeIssued) {
+                return response("Badge has already been issued.", 422);
+            }
         }
+        DB::connection('mysql')->table('badge_language')
+            ->delete([
+                'id' => $badgeLanguageId
+            ]);
+        return response("Successfully deleted this badge's language.", 200);
     }
 
     public function index() {
