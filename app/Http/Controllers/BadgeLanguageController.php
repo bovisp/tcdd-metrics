@@ -22,7 +22,6 @@ class BadgeLanguageController extends Controller
     }
 
     public function update($badgeLanguageId) {
-        //only check for badge issued if query paramter is NOT 'confirm'
         request()->validate([
             'language_id' => 'exists:languages,id'
         ]);
