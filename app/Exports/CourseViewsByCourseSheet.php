@@ -28,12 +28,13 @@ class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeading
 
     public function collection()
     {
-        $query = "select l.courseid, c.fullname 'englishname', c.fullname 'frenchname', count(*) as 'course_views'
+        $query = "select l.courseid, c.fullname 'english_course_name', c.fullname 'french_course_name', count(*) as 'course_views', cc.name 'english_category_name', cc.name 'french_category_name'
         FROM mdl_logstore_standard_log l
         LEFT OUTER JOIN mdl_role_assignments a
             ON l.contextid = a.contextid
             AND l.userid = a.userid
         INNER JOIN mdl_course c ON l.courseid = c.id
+        INNER JOIN `mdl_course_categories` cc on c.category = cc.id
         WHERE l.target = 'course'
         AND l.action = 'viewed'
         AND l.courseid > 1
@@ -49,19 +50,35 @@ class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeading
     {
         $formattedCollection = $collection->each(function ($x) {
             //english course name formatting
-            $original = $x->englishname;
-            $x->englishname = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->englishname));
+            $original = $x->english_course_name;
+            $x->english_course_name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->english_course_name));
             
-            if($original === $x->englishname) { //only run the second preg_replace if the first did nothing
-                $x->englishname = trim(preg_replace("/{mlang en}|{mlang}{mlang fr}(.*){mlang}|{mlang} {mlang fr}(.*){mlang}/", "", $x->englishname));
+            if($original === $x->english_course_name) { //only run the second preg_replace if the first did nothing
+                $x->english_course_name = trim(preg_replace("/{mlang en}|{mlang}{mlang fr}(.*){mlang}|{mlang} {mlang fr}(.*){mlang}/", "", $x->english_course_name));
             }
             
             //french course name formatting
-            $original = $x->frenchname;
-            $x->frenchname = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">(.*)<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $x->frenchname));
+            $original = $x->french_course_name;
+            $x->french_course_name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">(.*)<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $x->french_course_name));
             
-            if($original === $x->frenchname) { //only run the second preg_replace if the first did nothing
-                $x->frenchname = trim(preg_replace("/{mlang en}(.*){mlang}{mlang fr}|{mlang en}(.*){mlang} {mlang fr}|{mlang}/", "", $x->frenchname));
+            if($original === $x->french_course_name) { //only run the second preg_replace if the first did nothing
+                $x->french_course_name = trim(preg_replace("/{mlang en}(.*){mlang}{mlang fr}|{mlang en}(.*){mlang} {mlang fr}|{mlang}/", "", $x->french_course_name));
+            }
+
+            //english category name formatting
+            $original = $x->english_category_name;
+            $x->english_category_name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->english_category_name));
+            
+            if($original === $x->english_category_name) { //only run the second preg_replace if the first did nothing
+                $x->english_category_name = trim(preg_replace("/{mlang en}|{mlang}{mlang fr}(.*){mlang}|{mlang} {mlang fr}(.*){mlang}/", "", $x->english_category_name));
+            }
+            
+            //french category name formatting
+            $original = $x->french_category_name;
+            $x->french_category_name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">(.*)<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $x->french_category_name));
+            
+            if($original === $x->french_category_name) { //only run the second preg_replace if the first did nothing
+                $x->french_category_name = trim(preg_replace("/{mlang en}(.*){mlang}{mlang fr}|{mlang en}(.*){mlang} {mlang fr}|{mlang}/", "", $x->french_category_name));
             }
         });
         return $formattedCollection;
@@ -73,7 +90,9 @@ class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeading
             'Course Id',
             'English Course Name',
             'French Course Name',
-            'Course Views'
+            'Views',
+            'English Category Name',
+            'French Category Name'
         ];
     }
 

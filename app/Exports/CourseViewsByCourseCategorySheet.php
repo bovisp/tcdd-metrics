@@ -74,7 +74,7 @@ class CourseViewsByCourseCategorySheet implements FromCollection, WithTitle, Wit
             'Category Id',
             'English Course Category Name',
             'French Course Category Name',
-            'Course Views'
+            'Views'
         ];
     }
 

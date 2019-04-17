@@ -73,7 +73,7 @@ class CourseViewsByParentCategorySheet implements FromCollection, WithTitle, Wit
             'Category Id',
             'English Parent Category Name',
             'French Parent Category Name',
-            'Course Views'
+            'Views'
         ];
     }
 
