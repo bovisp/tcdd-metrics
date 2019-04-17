@@ -27,17 +27,7 @@ class BadgeLanguageController extends Controller
             'language_id' => 'exists:languages,id'
         ]);
         if(request()->query('confirm') === 'false') {
-            $badgeId = DB::connection('mysql')->table('badge_language')
-            ->where(['id' => $badgeLanguageId])
-            ->select('badge_id')
-            ->get()
-            ->map(function ($badgeLanguage) {return $badgeLanguage->badge_id;})[0];
-
-            $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')
-                ->where(['badgeid' => $badgeId])
-                ->exists();
-
-            if($badgeIssued) {
+            if($this->checkIfBadgeIssued($badgeLanguageId)) {
                 return response("Badge has already been issued.", 422);
             }
         }
@@ -53,17 +43,7 @@ class BadgeLanguageController extends Controller
 
     public function destroy($badgeLanguageId) {
         if(request()->query('confirm') === 'false') {
-            $badgeId = DB::connection('mysql')->table('badge_language')
-            ->where(['id' => $badgeLanguageId])
-            ->select('badge_id')
-            ->get()
-            ->map(function ($badgeLanguage) {return $badgeLanguage->badge_id;})[0];
-
-            $badgeIssued = DB::connection('mysql2')->table('mdl_badge_issued')
-                ->where(['badgeid' => $badgeId])
-                ->exists();
-
-            if($badgeIssued) {
+            if($this->checkIfBadgeIssued($badgeLanguageId)) {
                 return response("Badge has already been issued.", 422);
             }
         }
@@ -81,5 +61,17 @@ class BadgeLanguageController extends Controller
             ->select('badge_language.id', 'moodledb.mdl_badge.id as badge_id', 'moodledb.mdl_badge.name as badge_name', 'languages.id as language_id', 'languages.name as language_name')
             ->orderBy('badge_language.id', 'asc')
             ->get();
+    }
+
+    protected function checkIfBadgeIssued($badgeLanguageId) {
+        $badgeId = DB::connection('mysql')->table('badge_language')
+            ->where(['id' => $badgeLanguageId])
+            ->select('badge_id')
+            ->get()
+            ->map(function ($badgeLanguage) {return $badgeLanguage->badge_id;})[0];
+
+        return DB::connection('mysql2')->table('mdl_badge_issued')
+            ->where(['badgeid' => $badgeId])
+            ->exists();
     }
 }

@@ -17,18 +17,16 @@ class CourseViewsByParentCategorySheet implements FromCollection, WithTitle, Wit
 
     protected $startTimestamp;
     protected $endTimestamp;
-    protected $interval;
 
-    public function __construct($startTimestamp, $endTimestamp, $interval)
+    public function __construct($startTimestamp, $endTimestamp)
     {
         $this->startTimestamp = $startTimestamp;
         $this->endTimestamp = $endTimestamp;
-        $this->interval = $interval;
     }
 
     public function collection()
     {
-        $query = "SELECT IFNULL(cc.parent, 'null') as 'Id', IFNULL((select name from `mdl_course_categories` where id = cc.parent), 'null') as 'englishname', IFNULL((select name from `mdl_course_categories` where id = cc.parent), 'null') as 'frenchname', count(*) as 'views'
+        $query = "SELECT IFNULL(cc.parent, 'null') as 'Id', IFNULL((select name from `mdl_course_categories` where id = cc.parent), '(No parent category)') as 'englishname', IFNULL((select name from `mdl_course_categories` where id = cc.parent), '(No parent category)') as 'frenchname', count(*) as 'views'
             FROM `mdl_logstore_standard_log` l
             LEFT OUTER JOIN `mdl_role_assignments` a
                 ON l.contextid = a.contextid

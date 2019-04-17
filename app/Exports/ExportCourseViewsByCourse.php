@@ -18,19 +18,18 @@ class ExportCourseViewsByCourse implements WithMultipleSheets
     protected $endTimestamp;
     protected $interval;
 
-    public function __construct($startTimestamp, $endTimestamp, $interval)
+    public function __construct($startTimestamp, $endTimestamp)
     {
         $this->startTimestamp = $startTimestamp;
         $this->endTimestamp = $endTimestamp;
-        $this->interval = $interval;
     }
 
     public function sheets(): array
     {
         $sheets = [];
-        $sheets = [new CourseViewsByCourseSheet($this->startTimestamp, $this->endTimestamp, $this->interval),
-            new CourseViewsByCourseCategorySheet($this->startTimestamp, $this->endTimestamp, $this->interval),
-            new CourseViewsByParentCategorySheet($this->startTimestamp, $this->endTimestamp, $this->interval)];
+        $sheets = [new CourseViewsByCourseSheet($this->startTimestamp, $this->endTimestamp),
+            new CourseViewsByCourseCategorySheet($this->startTimestamp, $this->endTimestamp),
+            new CourseViewsByParentCategorySheet($this->startTimestamp, $this->endTimestamp)];
 
         return $sheets;
     }

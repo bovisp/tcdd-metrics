@@ -16,20 +16,18 @@ class ExportCompletionsByBadge implements WithMultipleSheets
 
     protected $startTimestamp;
     protected $endTimestamp;
-    protected $interval;
 
-    public function __construct($startTimestamp, $endTimestamp, $interval)
+    public function __construct($startTimestamp, $endTimestamp)
     {
         $this->startTimestamp = $startTimestamp;
         $this->endTimestamp = $endTimestamp;
-        $this->interval = $interval;
     }
 
     public function sheets(): array
     {
         $sheets = [];
-        $sheets = [new CompletionsByBadgeSheet($this->startTimestamp, $this->endTimestamp, $this->interval),
-            new CompletionsByCourseSheet($this->startTimestamp, $this->endTimestamp, $this->interval)];
+        $sheets = [new CompletionsByBadgeSheet($this->startTimestamp, $this->endTimestamp),
+            new CompletionsByCourseSheet($this->startTimestamp, $this->endTimestamp)];
 
         return $sheets;
     }

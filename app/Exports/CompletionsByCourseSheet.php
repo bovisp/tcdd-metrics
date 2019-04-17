@@ -17,13 +17,11 @@ class CompletionsByCourseSheet implements FromCollection, WithTitle, WithHeading
 
     protected $startTimestamp;
     protected $endTimestamp;
-    protected $interval;
 
-    public function __construct($startTimestamp, $endTimestamp, $interval)
+    public function __construct($startTimestamp, $endTimestamp)
     {
         $this->startTimestamp = $startTimestamp;
         $this->endTimestamp = $endTimestamp;
-        $this->interval = $interval;
     }
 
     public function collection()
