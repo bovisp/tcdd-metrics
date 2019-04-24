@@ -9,44 +9,12 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class ManageBadgeLanguagesTest extends TestCase
+class ManageCourseLanguagesTest extends TestCase
 {
     use DatabaseMigrations;
-    /** @test */
-    public function a_user_can_view_their_badge_languages() {
-        $this->withoutExceptionHandling();
-        //create a language
-        //$language = factory(Language::class)->create();
-        $language = new \stdClass;
-        $language->id = 1;
-        $language->name = 'English';
-        DB::connection('mysql')->table('languages')->insert([
-            'id' => $language->id,
-            'name' => $language->name
-        ]);
-        //create a badge
-        //$badge = factory(Badge::class)->create();
-        $badge = new \stdClass;
-        $badge->id = 1;
-        $badge->name = 'test badge';
-
-        $attributes = [
-            'language_id' => $language->id,
-            'language_name' => $language->name,
-            'badge_id' => $badge->id,
-            'badge_name' => $badge->name
-        ];
-
-        $this->post('/badge-languages', $attributes);
-
-        $this->get('/badge-languages')->assertJsonFragment([
-            'language_id' => $language->id,
-            'badge_id' => $badge->id]
-        );
-    }
 
     /** @test */
-    public function a_user_can_assign_a_language_to_a_badge()
+    public function a_user_can_assign_a_language_to_a_course()
     {
         $this->withoutExceptionHandling();
         //create a language
@@ -57,19 +25,51 @@ class ManageBadgeLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
-        //create a badge
-        //$badge = factory(Badge::class)->create();
-        $badge = new \stdClass;
-        $badge->id = 1;
+        //create a course
+        $course = new \stdClass;
+        $course->id = 1;
+        $course->name = 'test course';
 
         $attributes = [
             'language_id' => $language->id,
-            'badge_id' => $badge->id
+            'course_id' => $course->id,
         ];
 
-        $this->post('/badge-languages', $attributes);
+        $this->post('/course-languages', $attributes);
 
-        $this->assertDatabaseHas('badge_language', $attributes);
+        $this->assertDatabaseHas('course_language', $attributes);
+    }
+
+    /** @test */
+    public function a_user_can_view_their_course_languages() {
+        $this->withoutExceptionHandling();
+        //create a language
+        //$language = factory(Language::class)->create();
+        $language = new \stdClass;
+        $language->id = 1;
+        $language->name = 'English';
+        DB::connection('mysql')->table('languages')->insert([
+            'id' => $language->id,
+            'name' => $language->name
+        ]);
+        //create a course
+        $course = new \stdClass;
+        $course->id = 1;
+        $course->name = 'test course';
+
+        $attributes = [
+            'language_id' => $language->id,
+            'language_name' => $language->name,
+            'course_id' => $course->id,
+            'course_name' => $course->name
+        ];
+
+        $this->post('/course-languages', $attributes);
+
+        $this->get('/course-languages')->assertJsonFragment([
+            'language_id' => $language->id,
+            'course_id' => $course->id]
+        );
     }
 
     /** @test */
@@ -82,18 +82,18 @@ class ManageBadgeLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
-        $badge = new \stdClass;
-        $badge->id = 1;
+        $course = new \stdClass;
+        $course->id = 1;
 
         $attributes = [
             'language_id' => 99999999999999,
-            'badge_id' => $badge->id
+            'course_id' => $course->id
         ];
-        $this->post('/badge-languages', $attributes)->assertSessionHasErrors(['language_id']);
+        $this->post('/course-languages', $attributes)->assertSessionHasErrors(['language_id']);
     }
 
     /** @test */
-    public function it_requires_the_badge_id_to_exist_in_the_database()
+    public function it_requires_the_course_id_to_exist_in_the_database()
     {
         $language = new \stdClass;
         $language->id = 1;
@@ -102,18 +102,18 @@ class ManageBadgeLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
-        $badge = new \stdClass;
-        $badge->id = 1;
+        $course = new \stdClass;
+        $course->id = 1;
 
         $attributes = [
             'language_id' => $language->id,
-            'badge_id' => 9999999999999999
+            'course_id' => 9999999999999999
         ];
-        $this->post('/badge-languages', $attributes)->assertSessionHasErrors(['badge_id']);
+        $this->post('/course-languages', $attributes)->assertSessionHasErrors(['course_id']);
     }
 
     /** @test */
-    public function a_user_can_remove_a_badge_language()
+    public function a_user_can_remove_a_course_language()
     {
         $this->withoutExceptionHandling();
         //create a language
@@ -124,27 +124,25 @@ class ManageBadgeLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
-        //create a badge
-        //$badge = factory(Badge::class)->create();
-        $badge = new \stdClass;
-        $badge->id = 1;
+        //create a course
+        $course = new \stdClass;
+        $course->id = 1;
 
         $attributes = [
             'language_id' => $language->id,
-            'badge_id' => $badge->id
+            'course_id' => $course->id
         ];
-        //post to badge-languages...or update badges/{id}...?
 
-        $badgeLanguageId = DB::connection('mysql')->table('badge_language')->insertGetId($attributes);
-        $this->assertDatabaseHas('badge_language', $attributes);
+        $courseLanguageId = DB::connection('mysql')->table('course_language')->insertGetId($attributes);
+        $this->assertDatabaseHas('course_language', $attributes);
         
-        $this->delete("/badge-languages/{$badgeLanguageId}");
-        $this->assertDatabaseMissing('badge_language', $attributes);
+        $this->delete("/course-languages/{$courseLanguageId}");
+        $this->assertDatabaseMissing('course_language', $attributes);
 
     }
 
     /** @test */
-    public function a_user_can_update_a_badge_language()
+    public function a_user_can_update_a_course_language()
     {
         $this->withoutExceptionHandling();
         //create a language
@@ -162,30 +160,26 @@ class ManageBadgeLanguagesTest extends TestCase
             'id' => $language2->id,
             'name' => $language2->name
         ]);
-        //create a badge
-        //$badge = factory(Badge::class)->create();
-        $badge = new \stdClass;
-        $badge->id = 1;
+        //create a course
+        $course = new \stdClass;
+        $course->id = 1;
 
         $attributes = [
             'language_id' => $language1->id,
-            'badge_id' => $badge->id
+            'course_id' => $course->id
         ];
         
-        //post to badge-languages...or update badges/{id}...?
-
-        $badgeLanguageId = DB::connection('mysql')->table('badge_language')->insertGetId($attributes);
-        $this->assertDatabaseHas('badge_language', $attributes);
+        $courseLanguageId = DB::connection('mysql')->table('course_language')->insertGetId($attributes);
+        $this->assertDatabaseHas('course_language', $attributes);
         
-        $this->put("/badge-languages/{$badgeLanguageId}", [
-            'badge_id'=>$badge->id,
+        $this->put("/course-languages/{$courseLanguageId}", [
+            'course_id'=>$course->id,
             'language_id'=>$language2->id
         ]);
 
-        $this->assertDatabaseHas('badge_language', [
-            'id'=>$badgeLanguageId,
+        $this->assertDatabaseHas('course_language', [
+            'id'=>$courseLanguageId,
             'language_id'=>$language2->id
         ]);
     }
-
 }

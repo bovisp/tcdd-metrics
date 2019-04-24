@@ -1,1 +1,1 @@
-<h2>test</h2>
+<h2>Course Views By Course</h2>

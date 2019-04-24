@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBadgeLanguage extends Migration
+class CreateCourseLanguageTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,16 @@ class CreateBadgeLanguage extends Migration
      */
     public function up()
     {
-        Schema::create('badge_language', function (Blueprint $table) {
+        Schema::create('course_language', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
-            $table->unsignedInteger('badge_id')->unique();
+
+            $table->unsignedInteger('course_id')->unique();
             $table->unsignedInteger('language_id');
+            $table->unsignedInteger('multilingual_course_id')->nullable();
 
             $table->foreign('language_id')->references('id')->on('languages');
+            $table->foreign('multilingual_course_id')->references('id')->on('multilingual_course');
         });
     }
 
@@ -30,6 +33,6 @@ class CreateBadgeLanguage extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('badge_language');
+        Schema::dropIfExists('course_language');
     }
 }

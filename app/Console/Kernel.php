@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Jobs\GenerateReport;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Jobs\CompletionsByBadgeReport;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,22 +27,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
-
         // cron expressions:
         //      minute(0 - 59) | hour(0 - 23) | day(1 - 31) | month(1 - 12) | weekday(0 - 6) | year(optional)
         //      e.g. cron expression for quarterly (Jan, Apr, Jul, Oct): '0 0 1 1,4,7,10 *'
 
-        //quarterly
-        //$schedule->job(new GenerateReport)->cron('0 0 1 1,4,7,10 *');
-        $endDateTime = Carbon::now();
-        $startDateTime = Carbon::now()->subQuarter(); //set interval here
-        $schedule->job(new GenerateReport($startDateTime, $endDateTime))->everyMinute();
-
-        //$startDateTime = Carbon::now()->subYear();
-        //annually
-        $schedule->job(new GenerateReport($startDateTime, $endDateTime))->cron('0 0 1 1 *');
+        // quarterly
+        $subQuarterDateTime = Carbon::now()->subQuarter();
+        $schedule->job(new GenerateReport($subQuarterDateTime))->cron('1 9 1 1,4,7,10 *');
+        
+        // annually
+        $subYearDateTime = Carbon::now()->subYear();
+        $schedule->job(new GenerateReport($subYearDateTime))->cron('0 9 1 1 *');
     }
 
     /**

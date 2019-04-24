@@ -4,10 +4,12 @@ namespace App\Jobs;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use App\Exports\CourseViewsByCourse;
+use App\Exports\ExportCompletionsByBadge;
+use App\Exports\ExportCourseViewsByCourse;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Mail\EmailCourseViewsByCourse;
+use App\Mail\CompletionsByBadge;
+use App\Mail\CourseViewsByCourse;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,19 +22,18 @@ class GenerateReport implements ShouldQueue
     protected $dir;
     protected $startDateTime;
     protected $endDateTime;
-
-
+    protected $interval;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($startDateTime, $endDateTime)
+    public function __construct($startDateTime, $endDateTime = null)
     {
         $this->startDateTime = $startDateTime;
-        $this->endDateTime = $endDateTime;
+        $this->endDateTime = $endDateTime === null ? Carbon::now() : $endDateTime;
         $this->dir = env('APP_ENV') === 'testing' ? 'test' : '';
-        
+        $this->interval = $this->startDateTime->toDateString() . "_" . $this->endDateTime->toDateString();
     }
 
     /**
@@ -42,8 +43,9 @@ class GenerateReport implements ShouldQueue
      */
     public function handle()
     {
-        Excel::store(new CourseViewsByCourse($this->startDateTime, $this->endDateTime), $this->dir ? $this->dir . '/' . 'course_views_by_course.xlsx' : 'course_views_by_course.xlsx');
-
-        Mail::to('me@me.com')->send(new EmailCourseViewsByCourse);
+        Excel::store(new ExportCourseViewsByCourse($this->startDateTime->timestamp, $this->endDateTime->timestamp), $this->dir ? $this->dir . "/" . "course_views_" . $this->interval . ".xlsx" : "course_views_" . $this->interval . ".xlsx");
+        Mail::to('me@me.com')->send(new CourseViewsByCourse($this->interval));
+        Excel::store(new ExportCompletionsByBadge($this->startDateTime->timestamp, $this->endDateTime->timestamp), $this->dir ? $this->dir . "/" . "course_completions_" . $this->interval . ".xlsx" : "course_completions_" . $this->interval . ".xlsx");
+        Mail::to('me@me.com')->send(new CompletionsByBadge($this->interval));
     }
 }

@@ -13,6 +13,49 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/register', 'Auth\AuthController@register');
+
+Route::post('/login', 'Auth\AuthController@login');
+
+Route::group(['middleware' => 'jwt.auth'], function(){
+    Route::get('/me', 'Auth\AuthController@user');
+    Route::get('/timeline', 'TimelineController@index');
+    Route::post('/logout', 'Auth\AuthController@logout');
 });
+
+Route::post('/badge-languages', 'BadgeLanguageController@store');
+
+Route::put('/badge-languages/{badgeLanguage}', 'BadgeLanguageController@update');
+
+Route::delete('/badge-languages/{badgeLanguage}', 'BadgeLanguageController@destroy');
+
+Route::get('/badge-languages', 'BadgeLanguageController@index');
+
+Route::get('/languages', 'LanguageController@index');
+
+Route::get('/badges', 'BadgeController@index');
+
+Route::get('/courses', 'CourseController@index');
+
+Route::post('course-languages', 'CourseLanguageController@store');
+
+Route::delete('course-languages/{courseLanguage}', 'CourseLanguageController@destroy');
+
+Route::put('course-languages/{courseLanguage}', 'CourseLanguageController@update');
+
+Route::get('course-languages', 'CourseLanguageController@index');
+
+// Route::post('/auth/register', 'AuthController@register');
+// Route::post('/auth/login', 'AuthController@login');
+// Route::post('/auth/forgotpassword', 'PasswordResetController@email');
+// Route::post('/auth/resetpassword/{token}', 'PasswordResetController@reset');
+// Route::group(['middleware' => 'jwt.auth'], function(){
+//   Route::get('auth/user', 'AuthController@user');
+//   Route::post('auth/logout', 'AuthController@logout');
+//   Route::group(['middleware' => ['role:admin']], function(){
+//   	Route::resource('/manager', 'IndexController');
+//   });
+// });
+// Route::group(['middleware' => 'jwt.refresh'], function(){
+//   Route::get('auth/refresh', 'AuthController@refresh');
+// });
