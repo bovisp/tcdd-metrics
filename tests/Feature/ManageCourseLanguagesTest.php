@@ -124,8 +124,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
-        //create a badge
-        //$badge = factory(Badge::class)->create();
+        //create a course
         $course = new \stdClass;
         $course->id = 1;
 
@@ -161,8 +160,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language2->id,
             'name' => $language2->name
         ]);
-        //create a badge
-        //$badge = factory(Badge::class)->create();
+        //create a course
         $course = new \stdClass;
         $course->id = 1;
 

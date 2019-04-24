@@ -35,7 +35,15 @@ Route::get('/languages', 'LanguageController@index');
 
 Route::get('/badges', 'BadgeController@index');
 
+Route::get('/courses', 'CourseController@index');
 
+Route::post('course-languages', 'CourseLanguageController@store');
+
+Route::delete('course-languages/{courseLanguage}', 'CourseLanguageController@destroy');
+
+Route::put('course-languages/{courseLanguage}', 'CourseLanguageController@update');
+
+Route::get('course-languages', 'CourseLanguageController@index');
 
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');
