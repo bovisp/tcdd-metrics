@@ -31,4 +31,27 @@ class CourseLanguageController extends Controller
             ->orderBy('course_language.id', 'asc')
             ->get();
     }
+
+    public function destroy($courseLanguageId) {
+        DB::connection('mysql')->table('course_language')
+            ->delete([
+                'id' => $courseLanguageId
+            ]);
+        return response("Successfully deleted this course's language.", 200);
+    }
+
+    public function update($courseLanguageId) {
+        request()->validate([
+            'language_id' => 'exists:languages,id'
+        ]);
+
+        DB::connection('mysql')->table('course_language')
+        ->where(['id' => $courseLanguageId])
+        ->update([
+            'course_id' => request('course_id'),
+            'language_id' => request('language_id')
+        ]);
+
+        return response("Successfully updated this course's language.", 200);
+    }
 }

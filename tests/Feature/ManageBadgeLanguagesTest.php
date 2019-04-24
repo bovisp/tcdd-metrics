@@ -75,7 +75,13 @@ class ManageBadgeLanguagesTest extends TestCase
     /** @test */
     public function it_requires_the_language_id_to_exist_in_the_database()
     {
-        $language = factory(Language::class)->create();
+        $language = new \stdClass;
+        $language->id = 1;
+        $language->name = 'English';
+        DB::connection('mysql')->table('languages')->insert([
+            'id' => $language->id,
+            'name' => $language->name
+        ]);
         $badge = new \stdClass;
         $badge->id = 1;
 
@@ -89,7 +95,13 @@ class ManageBadgeLanguagesTest extends TestCase
     /** @test */
     public function it_requires_the_badge_id_to_exist_in_the_database()
     {
-        $language = factory(Language::class)->create();
+        $language = new \stdClass;
+        $language->id = 1;
+        $language->name = 'English';
+        DB::connection('mysql')->table('languages')->insert([
+            'id' => $language->id,
+            'name' => $language->name
+        ]);
         $badge = new \stdClass;
         $badge->id = 1;
 
@@ -105,7 +117,13 @@ class ManageBadgeLanguagesTest extends TestCase
     {
         $this->withoutExceptionHandling();
         //create a language
-        $language = factory(Language::class)->create();
+        $language = new \stdClass;
+        $language->id = 1;
+        $language->name = 'English';
+        DB::connection('mysql')->table('languages')->insert([
+            'id' => $language->id,
+            'name' => $language->name
+        ]);
         //create a badge
         //$badge = factory(Badge::class)->create();
         $badge = new \stdClass;
@@ -130,8 +148,20 @@ class ManageBadgeLanguagesTest extends TestCase
     {
         $this->withoutExceptionHandling();
         //create a language
-        $language1 = factory(Language::class)->create();
-        $language2 = factory(Language::class)->create();
+        $language1 = new \stdClass;
+        $language1->id = 1;
+        $language1->name = 'English';
+        DB::connection('mysql')->table('languages')->insert([
+            'id' => $language1->id,
+            'name' => $language1->name
+        ]);
+        $language2 = new \stdClass;
+        $language2->id = 2;
+        $language2->name = 'French';
+        DB::connection('mysql')->table('languages')->insert([
+            'id' => $language2->id,
+            'name' => $language2->name
+        ]);
         //create a badge
         //$badge = factory(Badge::class)->create();
         $badge = new \stdClass;
@@ -148,6 +178,7 @@ class ManageBadgeLanguagesTest extends TestCase
         $this->assertDatabaseHas('badge_language', $attributes);
         
         $this->put("/badge-languages/{$badgeLanguageId}", [
+            'badge_id'=>$badge->id,
             'language_id'=>$language2->id
         ]);
 
