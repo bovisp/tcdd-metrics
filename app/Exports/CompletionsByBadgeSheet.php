@@ -26,7 +26,7 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
 
     public function collection()
     {
-        $query = "SELECT c.id as 'Course Id', c.fullname as 'englishname', c.fullname as 'frenchname', l.name as 'Language', count(bi.badgeid) as 'Badges Issued'
+        $query = "SELECT c.id as 'Course Id', c.fullname as 'englishname', c.fullname as 'frenchname', b.id, b.name, l.name as 'Language', count(bi.badgeid) as 'Badges Issued'
         FROM `moodledb`.`mdl_badge_issued` bi
         INNER JOIN `moodledb`.`mdl_badge` b ON bi.badgeid = b.id
         INNER JOIN `moodledb`.`mdl_course` c ON b.courseid = c.id
@@ -68,6 +68,8 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
             'Course Id',
             'English Course Name',
             'French Course Name',
+            'Badge Id',
+            'Badge Name',
             'Badge Language',
             'Completions'
         ];
