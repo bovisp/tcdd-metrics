@@ -19,10 +19,10 @@ class CreateCourseLanguageTable extends Migration
 
             $table->unsignedInteger('course_id')->unique();
             $table->unsignedInteger('language_id');
-            $table->unsignedInteger('multilingual_course_id');
+            $table->unsignedInteger('multilingual_course_id')->nullable();
 
             $table->foreign('language_id')->references('id')->on('languages');
-            $table->foreign('multilingual_course_id')->references('id')->on('multilingual_course')->nullable();
+            $table->foreign('multilingual_course_id')->references('id')->on('multilingual_course');
         });
     }
 

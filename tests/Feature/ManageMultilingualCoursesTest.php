@@ -13,7 +13,7 @@ class ManageMultilingualCoursesTest extends TestCase
 {
     use DatabaseMigrations;
     /** @test */
-    public function testExample()
+    public function a_user_can_view_their_()
     {
         $response = $this->get('/');
 
