@@ -13,10 +13,29 @@ class ManageMultilingualCoursesTest extends TestCase
 {
     use DatabaseMigrations;
     /** @test */
-    public function a_user_can_view_their_()
+    public function a_user_can_associate_courses_as_a_multilingual_course()
     {
-        $response = $this->get('/');
+        $this->withoutExceptionHandling();
+        //create a language
+        $language = new \stdClass;
+        $language->id = 1;
+        $language->name = 'English';
+        DB::connection('mysql')->table('languages')->insert([
+            'id' => $language->id,
+            'name' => $language->name
+        ]);
+        //create a course
+        $course = new \stdClass;
+        $course->id = 1;
+        $course->name = 'test course';
 
-        $response->assertStatus(200);
+        $attributes = [
+            'language_id' => $language->id,
+            'course_id' => $course->id,
+        ];
+
+        $this->post('/course-languages', $attributes);
+
+        $this->assertDatabaseHas('course_language', $attributes);
     }
 }
