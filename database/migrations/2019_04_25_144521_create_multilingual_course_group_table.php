@@ -17,7 +17,7 @@ class CreateMultilingualCourseGroupTable extends Migration
             $table->increments('id');
             $table->timestamps();
 
-            $table->text('name');
+            $table->text('name')->nullable();
         });
     }
 

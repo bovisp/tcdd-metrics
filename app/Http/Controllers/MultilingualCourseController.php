@@ -10,16 +10,23 @@ class MultilingualCourseController extends Controller
 {
     public function store() {
         request()->validate([
-            'multilingual_course_group_id' => 'exists:multilingual_course_group,id',
-            'course_id' => 'exists:mysql2.mdl_course,id'
+            'course_id' => 'exists:mysql2.mdl_course,id',
+            'multilingual_course_group_id' => 'exists:multilingual_course_group,id'
         ]);
+
+        //create multilingual course group if request does not contain it
+        if(request('multilingual_course_group_id')) {
+            $mlangcoursegroupid = request('multilingual_course_group_id');
+        } else {
+            $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId([]);
+        }
 
         DB::connection('mysql')->table('multilingual_course')->insert([
             'course_id' => request('course_id'),
-            'multilingual_course_group_id' => request('multilingual_course_group_id')
+            'multilingual_course_group_id' => $mlangcoursegroupid
         ]);
 
-        return 'Course successfully assigned a multlingual course group.';
+        return 'Successfully assigned a course to a multilingual course group.';
     }
 
     public function index() {
@@ -33,11 +40,31 @@ class MultilingualCourseController extends Controller
     }
 
     public function destroy($multilingualCourseId) {
+        $mlangCourseGroupId = DB::connection('mysql')->table('multilingual_course')
+            ->where('id', '=', $multilingualCourseId)
+            ->select('multilingual_course_group_id')
+            ->get()
+            ->map(function ($multilingualCourseGroupId) {
+                return $multilingualCourseGroupId->multilingual_course_group_id;
+            })[0];
+
         DB::connection('mysql')->table('multilingual_course')
             ->delete([
                 'id' => $multilingualCourseId
             ]);
-        return response("Successfully deleted this multilingual course.", 200);
+        // also remove course group if no longer has any associated courses
+        $doNotDeleteCourseGroup = DB::connection('mysql')->table('multilingual_course')
+                ->where('multilingual_course_group_id', '=', $mlangCourseGroupId)
+                ->select()->get();
+        
+        if(count($doNotDeleteCourseGroup) > 0) {
+            return response("Successfully deleted this multilingual course.", 200);
+        }
+        DB::connection('mysql')->table('multilingual_course_group')
+            ->delete([
+                'id' => $mlangCourseGroupId
+            ]);
+        return response("Successfully deleted this multilingual course and its multilingual course group.", 200);
     }
 
     private function formatCollection(Collection $collection)

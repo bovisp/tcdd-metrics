@@ -14,24 +14,33 @@ class ManageMultilingualCoursesTest extends TestCase
     use DatabaseMigrations;
 
     /** @test */
-    public function a_user_can_associate_courses_as_a_multilingual_course() {
+    public function a_user_can_create_a_multilingual_course() {
         $this->withoutExceptionHandling();
-        //create a multilingual course group
-        $mlangcoursegroup = new \stdClass;
-        $mlangcoursegroup->id = 1;
-        $mlangcoursegroup->name = 'test group';
-        DB::connection('mysql')->table('multilingual_course_group')->insert([
-            'id' => $mlangcoursegroup->id,
-            'name' => $mlangcoursegroup->name
-        ]);
-        //create a course
+
+        //create a multilingual course
         $course = new \stdClass;
-        $course->id = 1;
-        $course->name = 'test course';
+        $course->id = 7;
+        $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId([]);
 
         $attributes = [
-            'multilingual_course_group_id' => $mlangcoursegroup->id,
             'course_id' => $course->id,
+            'multilingual_course_group_id' => $mlangcoursegroupid
+        ];
+
+        $this->post('/multilingual-courses', $attributes);
+        $this->assertDatabaseHas('multilingual_course', $attributes);
+    }
+
+    /** @test */
+    public function a_user_can_create_a_multilingual_course_without_a_course_group() {
+        $this->withoutExceptionHandling();
+
+        //create a multilingual course
+        $course = new \stdClass;
+        $course->id = 7;
+
+        $attributes = [
+            'course_id' => $course->id
         ];
 
         $this->post('/multilingual-courses', $attributes);
@@ -41,73 +50,34 @@ class ManageMultilingualCoursesTest extends TestCase
     /** @test */
     public function a_user_can_view_their_multilingual_courses() {
         $this->withoutExceptionHandling();
-        //create a multilingual course group
-        $mlangcoursegroup = new \stdClass;
-        $mlangcoursegroup->id = 1;
-        $mlangcoursegroup->name = 'test group';
-        DB::connection('mysql')->table('multilingual_course_group')->insert([
-            'id' => $mlangcoursegroup->id,
-            'name' => $mlangcoursegroup->name
-        ]);
-        //create a course
+        
+        //create a multilingual course
         $course = new \stdClass;
-        $course->id = 1;
-        $course->name = 'test course';
+        $course->id = 7;
+        $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId([]);
 
         $attributes = [
-            'multilingual_course_group_id' => $mlangcoursegroup->id,
             'course_id' => $course->id,
+            'multilingual_course_group_id' => $mlangcoursegroupid
         ];
 
         $this->post('/multilingual-courses', $attributes);
-
         $this->get('/multilingual-courses')->assertJsonFragment([
-            'multilingual_course_group_id' => $mlangcoursegroup->id,
-            'course_id' => $course->id]
-        );
+            'course_id' => $course->id
+        ]);
     }
 
     /** @test */
-    public function it_requires_the_multilingual_course_group_id_to_exist_in_the_database()
+    public function it_requires_the_course_to_exist_in_the_database()
     {
-        $mlangcoursegroup = new \stdClass;
-        $mlangcoursegroup->id = 1;
-        $mlangcoursegroup->name = 'test group';
-        DB::connection('mysql')->table('multilingual_course_group')->insert([
-            'id' => $mlangcoursegroup->id,
-            'name' => $mlangcoursegroup->name
-        ]);
-        //create a course
+        //create a multilingual course
         $course = new \stdClass;
-        $course->id = 1;
-        $course->name = 'test course';
+        $course->id = 7;
+        $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId([]);
 
         $attributes = [
-            'multilingual_course_group_id' => 999999999,
-            'course_id' => $course->id,
-        ];
-
-        $this->post('/multilingual-courses', $attributes)->assertSessionHasErrors(['multilingual_course_group_id']);
-    }
-
-    /** @test */
-    public function it_requires_the_course_id_to_exist_in_the_database()
-    {
-        $mlangcoursegroup = new \stdClass;
-        $mlangcoursegroup->id = 1;
-        $mlangcoursegroup->name = 'test group';
-        DB::connection('mysql')->table('multilingual_course_group')->insert([
-            'id' => $mlangcoursegroup->id,
-            'name' => $mlangcoursegroup->name
-        ]);
-        //create a course
-        $course = new \stdClass;
-        $course->id = 1;
-        $course->name = 'test course';
-
-        $attributes = [
-            'multilingual_course_group_id' => $mlangcoursegroup->id,
-            'course_id' => 999999999,
+            'course_id' => 99999999,
+            'multilingual_course_group_id' => $mlangcoursegroupid
         ];
 
         $this->post('/multilingual-courses', $attributes)->assertSessionHasErrors(['course_id']);
@@ -117,22 +87,14 @@ class ManageMultilingualCoursesTest extends TestCase
     public function a_user_can_remove_a_multilingual_course()
     {
         $this->withoutExceptionHandling();
-        //create a multilingual course group
-        $mlangcoursegroup = new \stdClass;
-        $mlangcoursegroup->id = 1;
-        $mlangcoursegroup->name = 'test group';
-        DB::connection('mysql')->table('multilingual_course_group')->insert([
-            'id' => $mlangcoursegroup->id,
-            'name' => $mlangcoursegroup->name
-        ]);
-        //create a course
+        //create a multilingual course
         $course = new \stdClass;
-        $course->id = 1;
-        $course->name = 'test course';
+        $course->id = 7;
+        $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId([]);
 
         $attributes = [
-            'multilingual_course_group_id' => $mlangcoursegroup->id,
             'course_id' => $course->id,
+            'multilingual_course_group_id' => $mlangcoursegroupid
         ];
 
         $multilingualCourseId = DB::connection('mysql')->table('multilingual_course')->insertGetId($attributes);
@@ -140,5 +102,6 @@ class ManageMultilingualCoursesTest extends TestCase
 
         $this->delete("/multilingual-courses/{$multilingualCourseId}");
         $this->assertDatabaseMissing('multilingual_course', $attributes);
+        $this->assertDatabaseMissing('multilingual_course_group', ['id' => $mlangcoursegroupid]);
     }
 }
