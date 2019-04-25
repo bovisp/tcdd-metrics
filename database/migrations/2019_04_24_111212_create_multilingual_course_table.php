@@ -17,7 +17,10 @@ class CreateMultilingualCourseTable extends Migration
             $table->increments('id');
             $table->timestamps();
 
-            $table->text('name');
+            $table->unsignedInteger('course_id')->unique();
+            $table->unsignedInteger('multilingual_course_group_id');
+
+            $table->foreign('multilingual_course_group_id')->references('id')->on('multilingual_course_group');
         });
     }
 
