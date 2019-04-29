@@ -26,7 +26,6 @@ class CompletionsByCourseSheet implements FromCollection, WithTitle, WithHeading
 
     public function collection()
     {
-        //need to group by course id and give course name
         $query = "SELECT c.id as 'Course Id', c.fullname as 'englishname', c.fullname as 'frenchname', count(c.id) as 'Completions'
         FROM `mdl_badge_issued` bi
         INNER JOIN `mdl_badge` b ON bi.badgeid = b.id

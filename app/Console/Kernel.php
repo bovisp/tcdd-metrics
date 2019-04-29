@@ -38,7 +38,8 @@ class Kernel extends ConsoleKernel
         // annually
         $subYearDateTime = Carbon::now()->subYear();
         $schedule->job(new GenerateReport($subYearDateTime))->cron('0 9 1 1 *');
-        $schedule->job(new GenerateReport($subYearDateTime))->everyMinute();
+
+        $schedule->job(new GenerateReport(Carbon::now()->subCentury()))->everyMinute();
     }
 
     /**
