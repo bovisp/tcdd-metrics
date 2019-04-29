@@ -44,8 +44,9 @@ class GenerateReport implements ShouldQueue
     public function handle()
     {
         Excel::store(new ExportCourseViewsByCourse($this->startDateTime->timestamp, $this->endDateTime->timestamp), $this->dir ? $this->dir . "/" . "course_views_" . $this->interval . ".xlsx" : "course_views_" . $this->interval . ".xlsx");
-        Mail::to('me@me.com')->send(new CourseViewsByCourse($this->interval));
         Excel::store(new ExportCompletionsByBadge($this->startDateTime->timestamp, $this->endDateTime->timestamp), $this->dir ? $this->dir . "/" . "course_completions_" . $this->interval . ".xlsx" : "course_completions_" . $this->interval . ".xlsx");
+
+        Mail::to('me@me.com')->send(new CourseViewsByCourse($this->interval));
         Mail::to('me@me.com')->send(new CompletionsByBadge($this->interval));
     }
 }

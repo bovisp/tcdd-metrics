@@ -23,7 +23,6 @@ class CompletionsByBadge extends Mailable
         $this->interval = $interval;
     }
 
-
     /**
      * Build the message.
      *
@@ -32,6 +31,6 @@ class CompletionsByBadge extends Mailable
     public function build()
     {
         return $this->view('emails.completionsbybadge')
-            ->attachFromStorage('course_completions_' . $this->interval . '.xlsx');
+            ->attachFromStorage(env('APP_ENV') === 'testing' ? 'test\course_completions_' . $this->interval . '.xlsx' : 'course_completions_' . $this->interval . '.xlsx');
     }
 }
