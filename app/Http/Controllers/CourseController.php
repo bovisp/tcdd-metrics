@@ -9,12 +9,17 @@ use Illuminate\Support\Collection;
 class CourseController extends Controller
 {
     public function index() {
-        //only courses not already in course-languages
-        $assignedCourseIds = DB::connection('mysql')->table('course_language')->select('course_id')->get()->map(function ($assignedCourseId) {
-            return $assignedCourseId->course_id;
-        })->toArray();
-
-        // need regex to clean up course fullname
+        //2 possible params: not in course-languages and not in multilingual courses
+        $assignedCourseIds = [];
+        if(request()->query('filter') === 'notinclang') {
+            $assignedCourseIds = DB::connection('mysql')->table('course_language')->select('course_id')->get()->map(function ($assignedCourseId) {
+                return $assignedCourseId->course_id;
+            })->toArray();
+        } elseif(request()->query('filter') === 'notinmlang') {
+            $assignedCourseIds = DB::connection('mysql')->table('multilingual_course')->select('course_id')->get()->map(function ($assignedCourseId) {
+                return $assignedCourseId->course_id;
+            })->toArray();
+        }
         $collection = collect(DB::connection('mysql2')->table('mdl_course')->whereNotIn('id', $assignedCourseIds)->orderBy('fullname', 'asc')->get());
         return $this->formatCollection($collection);
     }
