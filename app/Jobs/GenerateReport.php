@@ -55,6 +55,5 @@ class GenerateReport implements ShouldQueue
         $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\";
         @unlink($path . "\course_views_" . $this->interval . ".xlsx");
         @unlink($path . "\course_completions_" . $this->interval . ".xlsx");
-
     }
 }

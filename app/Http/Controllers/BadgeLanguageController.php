@@ -25,11 +25,13 @@ class BadgeLanguageController extends Controller
         request()->validate([
             'language_id' => 'exists:languages,id'
         ]);
+
         if(request()->query('confirm') === 'false') {
             if($this->checkIfBadgeIssued($badgeLanguageId)) {
                 return response("Badge has already been issued.", 422);
             }
         }
+
         DB::connection('mysql')->table('badge_language')
         ->where(['id' => $badgeLanguageId])
         ->update([
@@ -46,10 +48,12 @@ class BadgeLanguageController extends Controller
                 return response("Badge has already been issued.", 422);
             }
         }
+
         DB::connection('mysql')->table('badge_language')
-            ->delete([
-                'id' => $badgeLanguageId
-            ]);
+        ->delete([
+            'id' => $badgeLanguageId
+        ]);
+
         return response("Successfully deleted this badge's language.", 200);
     }
 

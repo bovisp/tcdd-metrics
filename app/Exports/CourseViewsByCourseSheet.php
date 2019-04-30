@@ -8,9 +8,11 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use App\Traits\FormatCollection;
 
 class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
 {
+    use FormatCollection;
     /**
     * @return \Illuminate\Support\Collection
     */
@@ -43,45 +45,9 @@ class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeading
         GROUP BY l.courseid";
 
         $collection = collect(DB::connection('mysql2')->select($query));
-        return $this->formatCollection($collection);
-    }
-
-    private function formatCollection(Collection $collection)
-    {
-        $formattedCollection = $collection->each(function ($x) {
-            //english course name formatting
-            $original = $x->english_course_name;
-            $x->english_course_name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->english_course_name));
-            
-            if($original === $x->english_course_name) { //only run the second preg_replace if the first did nothing
-                $x->english_course_name = trim(preg_replace("/{mlang en}|{mlang}{mlang fr}(.*){mlang}|{mlang} {mlang fr}(.*){mlang}/", "", $x->english_course_name));
-            }
-            
-            //french course name formatting
-            $original = $x->french_course_name;
-            $x->french_course_name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">(.*)<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $x->french_course_name));
-            
-            if($original === $x->french_course_name) { //only run the second preg_replace if the first did nothing
-                $x->french_course_name = trim(preg_replace("/{mlang en}(.*){mlang}{mlang fr}|{mlang en}(.*){mlang} {mlang fr}|{mlang}/", "", $x->french_course_name));
-            }
-
-            //english category name formatting
-            $original = $x->english_category_name;
-            $x->english_category_name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $x->english_category_name));
-            
-            if($original === $x->english_category_name) { //only run the second preg_replace if the first did nothing
-                $x->english_category_name = trim(preg_replace("/{mlang en}|{mlang}{mlang fr}(.*){mlang}|{mlang} {mlang fr}(.*){mlang}/", "", $x->english_category_name));
-            }
-            
-            //french category name formatting
-            $original = $x->french_category_name;
-            $x->french_category_name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">(.*)<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $x->french_category_name));
-            
-            if($original === $x->french_category_name) { //only run the second preg_replace if the first did nothing
-                $x->french_category_name = trim(preg_replace("/{mlang en}(.*){mlang}{mlang fr}|{mlang en}(.*){mlang} {mlang fr}|{mlang}/", "", $x->french_category_name));
-            }
-        });
-        return $formattedCollection;
+        $formattedCollection = $this->formatTwoColumns($collection, 'english_course_name', 'french_course_name');
+        
+        return $this->formatTwoColumns($formattedCollection, 'english_category_name', 'french_category_name');
     }
 
     public function headings(): array

@@ -87,6 +87,7 @@ class ManageMultilingualCoursesTest extends TestCase
     public function a_user_can_remove_a_multilingual_course()
     {
         $this->withoutExceptionHandling();
+
         //create a multilingual course
         $course = new \stdClass;
         $course->id = 7;
@@ -109,6 +110,7 @@ class ManageMultilingualCoursesTest extends TestCase
     public function a_user_can_update_a_multilingual_course()
     {
         $this->withoutExceptionHandling();
+        
         //create a multilingual course
         $course = new \stdClass;
         $course->id = 7;

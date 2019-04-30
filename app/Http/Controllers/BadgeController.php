@@ -12,7 +12,7 @@ class BadgeController extends Controller
         $assignedBadgeIds = DB::connection('mysql')->table('badge_language')->select('badge_id')->get()->map(function ($assignedBadgeId) {
             return $assignedBadgeId->badge_id;
         })->toArray();
-
+        
         return DB::connection('mysql2')->table('mdl_badge')->whereNotIn('id', $assignedBadgeIds)->orderBy('name', 'asc')->get();
     }
 }
