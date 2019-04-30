@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// badge languages
 Route::post('badge-languages', 'BadgeLanguageController@store');
 
 Route::delete('badge-languages/{badgeLanguage}', 'BadgeLanguageController@destroy');
@@ -23,7 +24,7 @@ Route::put('badge-languages/{badgeLanguage}', 'BadgeLanguageController@update');
 
 Route::get('badge-languages', 'BadgeLanguageController@index');
 
-
+// course languages
 Route::post('course-languages', 'CourseLanguageController@store');
 
 Route::delete('course-languages/{courseLanguage}', 'CourseLanguageController@destroy');
@@ -31,6 +32,15 @@ Route::delete('course-languages/{courseLanguage}', 'CourseLanguageController@des
 Route::put('course-languages/{courseLanguage}', 'CourseLanguageController@update');
 
 Route::get('course-languages', 'CourseLanguageController@index');
+
+// multilingual courses
+Route::post('multilingual-courses', 'MultilingualCourseController@store');
+
+Route::delete('multilingual-courses/{multilingualCourse}', 'MultilingualCourseController@destroy');
+
+Route::put('multilingual-courses/{multilingualCourse}', 'MultilingualCourseController@update');
+
+Route::get('multilingual-courses', 'MultilingualCourseController@index');
 
 //show
 //edit

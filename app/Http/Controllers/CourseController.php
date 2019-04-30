@@ -4,16 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
+use App\Traits\FormatCollection;
 
 class CourseController extends Controller
 {
-    public function index() {
-        //only courses not already in course-languages
-        $assignedCourseIds = DB::connection('mysql')->table('course_language')->select('course_id')->get()->map(function ($assignedCourseId) {
-            return $assignedCourseId->course_id;
-        })->toArray();
+    use FormatCollection;
 
-        // need regex to clean up course fullname
-        return DB::connection('mysql2')->table('mdl_course')->whereNotIn('id', $assignedCourseIds)->orderBy('fullname', 'asc')->get();
+    public function index() {
+        //2 possible filters: not in course-languages and not in multilingual-courses
+        $assignedCourseIds = [];
+        if(request()->query('filter') === 'notinclang') {
+            $assignedCourseIds = DB::connection('mysql')->table('course_language')->select('course_id')->get()->map(function ($assignedCourseId) {
+                return $assignedCourseId->course_id;
+            })->toArray();
+        } elseif(request()->query('filter') === 'notinmlang') {
+            $assignedCourseIds = DB::connection('mysql')->table('multilingual_course')->select('course_id')->get()->map(function ($assignedCourseId) {
+                return $assignedCourseId->course_id;
+            })->toArray();
+        }
+        $collection = collect(DB::connection('mysql2')->table('mdl_course')->whereNotIn('id', $assignedCourseIds)->orderBy('fullname', 'asc')->get());
+        
+        return $this->formatOneColumn($collection, "fullname");
     }
 }

@@ -33,6 +33,8 @@ Route::get('/badge-languages', 'BadgeLanguageController@index');
 
 Route::get('/languages', 'LanguageController@index');
 
+Route::get('/multilingual-course-groups', 'MultilingualCourseGroupController@index');
+
 Route::get('/badges', 'BadgeController@index');
 
 Route::get('/courses', 'CourseController@index');
@@ -44,6 +46,14 @@ Route::delete('course-languages/{courseLanguage}', 'CourseLanguageController@des
 Route::put('course-languages/{courseLanguage}', 'CourseLanguageController@update');
 
 Route::get('course-languages', 'CourseLanguageController@index');
+
+Route::post('multilingual-courses', 'MultilingualCourseController@store');
+
+Route::delete('multilingual-courses/{multilingualCourse}', 'MultilingualCourseController@destroy');
+
+Route::put('multilingual-courses/{multilingualCourse}', 'MultilingualCourseController@update');
+
+Route::get('multilingual-courses', 'MultilingualCourseController@index');
 
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');

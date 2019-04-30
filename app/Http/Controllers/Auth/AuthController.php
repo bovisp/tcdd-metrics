@@ -36,14 +36,14 @@ class AuthController extends Controller
                     'errors' => [
                         'root' => 'Could not sign you in with those details.'
                     ]
-                    ], 401);
+                ], 401);
             }
         } catch (JWTException $e) {
             return response()->json([
                 'errors' => [
                     'root' => 'Failed.'
                 ]
-                ], $e->getStatusCode());
+            ], $e->getStatusCode());
         }
 
         return response()->json([
@@ -52,13 +52,11 @@ class AuthController extends Controller
                 'token' => $token
             ]
         ], 200);
-
     }
 
     public function logout()
 	{
 	    JWTAuth::invalidate();
-	    
 	    return response([
             'status' => 'success',
             'msg' => 'Logged out Successfully.'

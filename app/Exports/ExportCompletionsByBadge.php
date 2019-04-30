@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Exports\CompletionsByBadgeSheet;
 use App\Exports\CompletionsByCourseSheet;
 use Maatwebsite\Excel\Concerns\Exportable;
+use App\Exports\CompletionsByCourseGroupSheet;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 

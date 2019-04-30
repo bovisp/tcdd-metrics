@@ -17,6 +17,7 @@ class ManageCourseLanguagesTest extends TestCase
     public function a_user_can_assign_a_language_to_a_course()
     {
         $this->withoutExceptionHandling();
+
         //create a language
         $language = new \stdClass;
         $language->id = 1;
@@ -25,6 +26,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
+
         //create a course
         $course = new \stdClass;
         $course->id = 1;
@@ -36,15 +38,14 @@ class ManageCourseLanguagesTest extends TestCase
         ];
 
         $this->post('/course-languages', $attributes);
-
         $this->assertDatabaseHas('course_language', $attributes);
     }
 
     /** @test */
     public function a_user_can_view_their_course_languages() {
         $this->withoutExceptionHandling();
+
         //create a language
-        //$language = factory(Language::class)->create();
         $language = new \stdClass;
         $language->id = 1;
         $language->name = 'English';
@@ -52,6 +53,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
+
         //create a course
         $course = new \stdClass;
         $course->id = 1;
@@ -65,7 +67,6 @@ class ManageCourseLanguagesTest extends TestCase
         ];
 
         $this->post('/course-languages', $attributes);
-
         $this->get('/course-languages')->assertJsonFragment([
             'language_id' => $language->id,
             'course_id' => $course->id]
@@ -82,6 +83,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
+
         $course = new \stdClass;
         $course->id = 1;
 
@@ -89,6 +91,7 @@ class ManageCourseLanguagesTest extends TestCase
             'language_id' => 99999999999999,
             'course_id' => $course->id
         ];
+        
         $this->post('/course-languages', $attributes)->assertSessionHasErrors(['language_id']);
     }
 
@@ -102,6 +105,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
+
         $course = new \stdClass;
         $course->id = 1;
 
@@ -109,6 +113,7 @@ class ManageCourseLanguagesTest extends TestCase
             'language_id' => $language->id,
             'course_id' => 9999999999999999
         ];
+
         $this->post('/course-languages', $attributes)->assertSessionHasErrors(['course_id']);
     }
 
@@ -116,6 +121,7 @@ class ManageCourseLanguagesTest extends TestCase
     public function a_user_can_remove_a_course_language()
     {
         $this->withoutExceptionHandling();
+
         //create a language
         $language = new \stdClass;
         $language->id = 1;
@@ -124,6 +130,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language->id,
             'name' => $language->name
         ]);
+
         //create a course
         $course = new \stdClass;
         $course->id = 1;
@@ -138,13 +145,13 @@ class ManageCourseLanguagesTest extends TestCase
         
         $this->delete("/course-languages/{$courseLanguageId}");
         $this->assertDatabaseMissing('course_language', $attributes);
-
     }
 
     /** @test */
     public function a_user_can_update_a_course_language()
     {
         $this->withoutExceptionHandling();
+
         //create a language
         $language1 = new \stdClass;
         $language1->id = 1;
@@ -153,6 +160,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language1->id,
             'name' => $language1->name
         ]);
+
         $language2 = new \stdClass;
         $language2->id = 2;
         $language2->name = 'French';
@@ -160,6 +168,7 @@ class ManageCourseLanguagesTest extends TestCase
             'id' => $language2->id,
             'name' => $language2->name
         ]);
+        
         //create a course
         $course = new \stdClass;
         $course->id = 1;

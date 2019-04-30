@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCourseLanguageTable extends Migration
+class CreateMultilingualCourseGroupTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateCourseLanguageTable extends Migration
      */
     public function up()
     {
-        Schema::create('course_language', function (Blueprint $table) {
+        Schema::create('multilingual_course_group', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
 
-            $table->unsignedInteger('course_id')->unique();
-            $table->unsignedInteger('language_id');
-
-            $table->foreign('language_id')->references('id')->on('languages');
+            $table->text('name')->nullable();
         });
     }
 
@@ -31,6 +28,6 @@ class CreateCourseLanguageTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('course_language');
+        Schema::dropIfExists('multilingual_course_group');
     }
 }
