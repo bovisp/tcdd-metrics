@@ -52,7 +52,7 @@ class GenerateReport implements ShouldQueue
         Mail::to('me@me.com')->send(new CourseCompletions($this->interval));
 
         //delete spreadsheets from disk
-        $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\" . $this->dir;
+        $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\";
         @unlink($path . "\course_views_" . $this->interval . ".xlsx");
         @unlink($path . "\course_completions_" . $this->interval . ".xlsx");
 
