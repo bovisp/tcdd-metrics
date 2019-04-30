@@ -8,8 +8,8 @@ use App\Exports\ExportCompletionsByBadge;
 use App\Exports\ExportCourseViewsByCourse;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Mail\CompletionsByBadge;
-use App\Mail\CourseViewsByCourse;
+use App\Mail\CourseCompletions;
+use App\Mail\CourseViews;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -43,10 +43,18 @@ class GenerateReport implements ShouldQueue
      */
     public function handle()
     {
+        //generate spreadsheets and save to disk
         Excel::store(new ExportCourseViewsByCourse($this->startDateTime->timestamp, $this->endDateTime->timestamp), $this->dir ? $this->dir . "/" . "course_views_" . $this->interval . ".xlsx" : "course_views_" . $this->interval . ".xlsx");
         Excel::store(new ExportCompletionsByBadge($this->startDateTime->timestamp, $this->endDateTime->timestamp), $this->dir ? $this->dir . "/" . "course_completions_" . $this->interval . ".xlsx" : "course_completions_" . $this->interval . ".xlsx");
 
-        Mail::to('me@me.com')->send(new CourseViewsByCourse($this->interval));
-        Mail::to('me@me.com')->send(new CompletionsByBadge($this->interval));
+        //email spreadsheets
+        Mail::to('me@me.com')->send(new CourseViews($this->interval));
+        Mail::to('me@me.com')->send(new CourseCompletions($this->interval));
+
+        //delete spreadsheets from disk
+        $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\" . $this->dir;
+        @unlink($path . "\course_views_" . $this->interval . ".xlsx");
+        @unlink($path . "\course_completions_" . $this->interval . ".xlsx");
+
     }
 }

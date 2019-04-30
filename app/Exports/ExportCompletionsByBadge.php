@@ -28,8 +28,7 @@ class ExportCompletionsByBadge implements WithMultipleSheets
     {
         $sheets = [];
         $sheets = [new CompletionsByBadgeSheet($this->startTimestamp, $this->endTimestamp),
-            new CompletionsByCourseSheet($this->startTimestamp, $this->endTimestamp),
-            new CompletionsByCourseGroupSheet($this->startTimestamp, $this->endTimestamp)];
+            new CompletionsByCourseSheet($this->startTimestamp, $this->endTimestamp)];
 
         return $sheets;
     }

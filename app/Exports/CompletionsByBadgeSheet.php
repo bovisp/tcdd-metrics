@@ -30,11 +30,12 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
         FROM `moodledb`.`mdl_badge_issued` bi
         INNER JOIN `moodledb`.`mdl_badge` b ON bi.badgeid = b.id
         INNER JOIN `moodledb`.`mdl_course` c ON b.courseid = c.id
-        INNER JOIN `tcdd-metrics`.`badge_language` bl ON bi.badgeid = bl.badge_id
-        INNER JOIN `tcdd-metrics`.`languages` l ON bl.language_id = l.id
+        LEFT OUTER JOIN `tcdd-metrics`.`badge_language` bl ON bi.badgeid = bl.badge_id
+        LEFT OUTER JOIN `tcdd-metrics`.`languages` l ON bl.language_id = l.id
         WHERE bi.badgeid IN (44,45,8,22,11,12,27,28,34,31,43,42)
         AND bi.dateissued BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
-        GROUP BY bi.badgeid";
+        GROUP BY bi.badgeid
+        ORDER BY c.id";
 
         $collection = collect(DB::connection('mysql2')->select($query));
         return $this->formatCollection($collection);

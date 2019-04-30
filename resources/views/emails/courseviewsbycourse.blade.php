@@ -1,1 +1,0 @@
-<h2>Course Views By Course</h2>

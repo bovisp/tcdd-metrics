@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CourseViewsByCourse extends Mailable
+class CourseCompletions extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -30,7 +30,7 @@ class CourseViewsByCourse extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.courseviewsbycourse')
-            ->attachFromStorage(env('APP_ENV') === 'testing' ? 'test\course_views_' . $this->interval . '.xlsx' : 'course_views_' . $this->interval . '.xlsx');
+        return $this->view('emails.coursecompletions')
+            ->attachFromStorage(env('APP_ENV') === 'testing' ? 'test\course_completions_' . $this->interval . '.xlsx' : 'course_completions_' . $this->interval . '.xlsx');
     }
 }

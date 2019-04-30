@@ -33,8 +33,8 @@ class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeading
             AND l.userid = a.userid
         INNER JOIN mdl_course c ON l.courseid = c.id
         INNER JOIN `mdl_course_categories` cc ON c.category = cc.id
-        INNER JOIN `tcdd-metrics`.`course_language` cl ON l.courseid = cl.course_id
-        INNER JOIN `tcdd-metrics`.`languages` lg ON cl.language_id = lg.id
+        LEFT OUTER JOIN `tcdd-metrics`.`course_language` cl ON l.courseid = cl.course_id
+        LEFT OUTER JOIN `tcdd-metrics`.`languages` lg ON cl.language_id = lg.id
         WHERE l.target = 'course'
         AND l.action = 'viewed'
         AND l.courseid > 1
