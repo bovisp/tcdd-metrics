@@ -3,10 +3,10 @@
 namespace App\Console;
 
 use Carbon\Carbon;
-use App\Jobs\GenerateReport;
+use App\Jobs\GenerateCourseViews;
+use App\Jobs\GenerateCourseCompletions;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Jobs\CompletionsByBadgeReport;
 
 class Kernel extends ConsoleKernel
 {
@@ -33,14 +33,17 @@ class Kernel extends ConsoleKernel
 
         // quarterly
         $subQuarterDateTime = Carbon::now()->subQuarter();
-        $schedule->job(new GenerateReport($subQuarterDateTime))->cron('1 6 1 1,4,7,10 *');
+        $schedule->job(new GenerateCourseViews($subQuarterDateTime))->cron('2 6 1 1,4,7,10 *');
+        $schedule->job(new GenerateCourseCompletions($subQuarterDateTime))->cron('3 6 1 1,4,7,10 *');
         
         // annually
         $subYearDateTime = Carbon::now()->subYear();
-        $schedule->job(new GenerateReport($subYearDateTime))->cron('0 6 1 1 *');
+        $schedule->job(new GenerateCourseViews($subYearDateTime))->cron('0 6 1 1 *');
+        $schedule->job(new GenerateCourseCompletions($subYearDateTime))->cron('1 6 1 1 *');
 
         // test
-        $schedule->job(new GenerateReport(Carbon::now()->subCentury()))->everyMinute();
+        $schedule->job(new GenerateCourseViews(Carbon::now()->subCentury()))->everyMinute();
+        $schedule->job(new GenerateCourseCompletions(Carbon::now()->subCentury()))->everyMinute();
     }
 
     /**
