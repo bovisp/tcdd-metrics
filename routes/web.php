@@ -42,6 +42,9 @@ Route::put('multilingual-courses/{multilingualCourse}', 'MultilingualCourseContr
 
 Route::get('multilingual-courses', 'MultilingualCourseController@index');
 
+// generate report
+Route::post('generate-report', 'GenerateReportController@store');
+
 //show
 //edit
 //create
