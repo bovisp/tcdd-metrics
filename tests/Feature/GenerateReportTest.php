@@ -31,18 +31,26 @@ class GenerateReportTest extends TestCase
         $startDateTime = Carbon::now()->subCentury();
         $endDateTime = Carbon::now();
         $request = [
-            'reports' => $reportIds,
-            'startDate' => $startDateTime,
-            'endDate' => $endDateTime
+            'reportIds' => $reportIds,
+            'startDateTime' => $startDateTime,
+            'endDateTime' => $endDateTime
         ];
         $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
 
         // post request to controller
         $this->post('/generate-report', $request);
+
         // assert each report has been saved to disk
         $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\test";
-        $this->assertFileExists($path . "\course_views_" . $interval . ".xlsx");
-        
+        foreach($reportIds as $reportId) {
+            $reportName = DB::connection('mysql')->table('report_types')
+                ->select('name')
+                ->where('id', '=', $reportId)->get()[0]->name;
+
+            $formattedReportName = str_replace(' ', '_', $reportName);
+            $this->assertFileExists($path . "\\" . $formattedReportName . "_" . $interval . ".xlsx");
+            @unlink($path . "\\" . $formattedReportName . "_" . $interval . ".xlsx");
+        };
     }
 
     /** @test */
