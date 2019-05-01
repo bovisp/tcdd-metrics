@@ -29,7 +29,7 @@ class MultilingualCourseController extends Controller
         ]);
 
         return ['multilingual_course_group_id' => $mlangcoursegroupid,
-        'message' => 'Successfully assigned a course to a multilingual course group.'];
+        'message' => 'Successfully assigned courses to a multilingual course group.'];
     }
 
     public function index() {

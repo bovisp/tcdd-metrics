@@ -32,14 +32,14 @@ class Kernel extends ConsoleKernel
 
         // quarterly
         $subQuarterDateTime = Carbon::now()->subQuarter();
-        $schedule->job(new GenerateReportJob($subQuarterDateTime))->cron('1 6 1 1,4,7,10 *');
+        //$schedule->job(new GenerateReportJob($subQuarterDateTime))->cron('1 6 1 1,4,7,10 *');
         
         // annually
         $subYearDateTime = Carbon::now()->subYear();
-        $schedule->job(new GenerateReportJob($subYearDateTime))->cron('0 6 1 1 *');
+        //$schedule->job(new GenerateReportJob($subYearDateTime))->cron('0 6 1 1 *');
 
         // test
-        $schedule->job(new GenerateReportJob(Carbon::now()->subCentury()))->everyMinute();
+        $schedule->job(new GenerateReportJob(null, Carbon::now()->subCentury()))->everyMinute();
     }
 
     /**

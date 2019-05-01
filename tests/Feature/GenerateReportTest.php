@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
+use App\Mail\TrainingMetricsReports;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -56,9 +58,31 @@ class GenerateReportTest extends TestCase
     /** @test */
     public function a_user_can_generate_a_report_and_mail_it()
     {
-        //a user can save a report to disk
-        $response = $this->get('/');
+        $this->withoutExceptionHandling();
+        // insert report types
+        DB::connection('mysql')->table('report_types')->insert([
+            'id' => 1,
+            'name' => 'Course Completions'
+        ]);
+        DB::connection('mysql')->table('report_types')->insert([
+            'id' => 2,
+            'name' => 'Course Views'
+        ]);
 
-        $response->assertStatus(200);
+        // create request
+        $reportIds = [1,2];
+        $startDateTime = Carbon::now()->subCentury();
+        $endDateTime = Carbon::now();
+        $request = [
+            'reportIds' => $reportIds,
+            'startDateTime' => $startDateTime,
+            'endDateTime' => $endDateTime
+        ];
+
+        // post request to controller
+        $this->post('/generate-report', $request);
+
+        //assert that email has been sent
+        Mail::assertSent(TrainingMetricsReports::class);
     }
 }

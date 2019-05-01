@@ -4,88 +4,70 @@ namespace Tests\Feature;
 
 use Carbon\Carbon;
 use Tests\TestCase;
-use App\Jobs\GenerateCourseViews;
-use App\Jobs\GenerateCourseCompletions;
-use App\Mail\CourseCompletions;
-use App\Mail\CourseViews;
+use App\Jobs\GenerateReportJob;
+use Illuminate\Support\Facades\DB;
+use App\Mail\TrainingMetricsReports;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ScheduledJobsTest extends TestCase
 {
+    use DatabaseMigrations;
     /** @test */
-    public function generate_course_views_sends_email() {
+    public function generate_report_sends_email() {
+        $this->withExceptionHandling();
+        Mail::fake();
+        Mail::assertNothingSent();
+        // insert report types
+        DB::connection('mysql')->table('report_types')->insert([
+            'id' => 1,
+            'name' => 'Course Completions'
+        ]);
+        DB::connection('mysql')->table('report_types')->insert([
+            'id' => 2,
+            'name' => 'Course Views'
+        ]);
+
+        //dispatch GenerateReport
+        $startDateTime = Carbon::now()->subYear();
+        $endDateTime = Carbon::now();
+        $reportIds = [1,2];
+        GenerateReportJob::dispatch($reportIds, $startDateTime, $endDateTime);
+
+        //assert that email has been sent
+        Mail::assertSent(TrainingMetricsReports::class);
+    }
+
+    /** @test */
+    public function generate_report_saves_a_file() {
         $this->withExceptionHandling();
         Mail::fake();
         Mail::assertNothingSent();
 
+        // insert report types
+        DB::connection('mysql')->table('report_types')->insert([
+            'id' => 1,
+            'name' => 'Course Completions'
+        ]);
+        DB::connection('mysql')->table('report_types')->insert([
+            'id' => 2,
+            'name' => 'Course Views'
+        ]);
+
         //dispatch GenerateReport
         $startDateTime = Carbon::now()->subYear();
         $endDateTime = Carbon::now();
         $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
+        $reportNames = ['Course Completions', 'Course Views'];
+
         GenerateCourseViews::dispatch($startDateTime, $endDateTime);
-
-        //assert that email has been sent
-        Mail::assertSent(CourseViews::class);
-
-        //delete spreadsheet
-        @unlink("C:\wamp64\www\\tcdd-metrics\storage\app\\test\course_views_" . $interval . ".xlsx");
-    }
-
-    /** @test */
-    public function generate_course_views_saves_a_file() {
-        Mail::fake();
-        Mail::assertNothingSent();
-
-        //dispatch GenerateReport
-        $startDateTime = Carbon::now()->subYear();
-        $endDateTime = Carbon::now();
-        $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
-        GenerateCourseViews::dispatch($startDateTime, $endDateTime);
-
-        //assert that spreadsheet has been saved to disk
-        $this->assertFileExists("C:\wamp64\www\\tcdd-metrics\storage\app\\test\course_views_" . $interval . ".xlsx");
-
-        //delete spreadsheet
-        @unlink("C:\wamp64\www\\tcdd-metrics\storage\app\\test\course_views_" . $interval . ".xlsx");
-    }
-
-    /** @test */
-    public function generate_course_completions_sends_email() {
-        $this->withExceptionHandling();
-        Mail::fake();
-        Mail::assertNothingSent();
-
-        //dispatch GenerateReport
-        $startDateTime = Carbon::now()->subYear();
-        $endDateTime = Carbon::now();
-        $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
-        GenerateCourseCompletions::dispatch($startDateTime, $endDateTime);
-
-        //assert that email has been sent
-        Mail::assertSent(CourseCompletions::class);
-
-        //delete spreadsheet
-        @unlink("C:\wamp64\www\\tcdd-metrics\storage\app\\test\course_completions_" . $interval . ".xlsx");
-    }
-
-    /** @test */
-    public function generate_course_completions_saves_a_file() {
-        Mail::fake();
-        Mail::assertNothingSent();
-
-        //dispatch GenerateReport
-        $startDateTime = Carbon::now()->subYear();
-        $endDateTime = Carbon::now();
-        $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
-        GenerateCourseCompletions::dispatch($startDateTime, $endDateTime);
 
         //assert that spreadsheets have been saved to disk
-        $this->assertFileExists("C:\wamp64\www\\tcdd-metrics\storage\app\\test\course_completions_" . $interval . ".xlsx");
-
-        //delete spreadsheet
-        @unlink("C:\wamp64\www\\tcdd-metrics\storage\app\\test\course_completions_" . $interval . ".xlsx");
+        foreach($reportNames as $reportName) {
+            $fileName = str_replace(" ", "_", $reportName);
+            $this->assertFileExists("C:\wamp64\www\\tcdd-metrics\storage\app\\test\\" . $fileName . "_" . $interval . ".xlsx");
+        }
     }
 }

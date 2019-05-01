@@ -37,6 +37,9 @@ class GenerateReportJob implements ShouldQueue
         $this->interval = $this->startDateTime->toDateString() . "_" . $this->endDateTime->toDateString();
         $this->reportIds = $reportIds === null ?  DB::connection('mysql')->table('report_types')
             ->select('id')->get()
+            ->map(function ($reportId){
+                return $reportId->id;
+            })->toArray()
             : $reportIds;
         $this->reportNames = [];
         foreach($this->reportIds as $reportId) {
@@ -54,7 +57,6 @@ class GenerateReportJob implements ShouldQueue
      */
     public function handle()
     {
-        dd($this->reportIds);
         //generate spreadsheets and save to disk
         foreach($this->reportNames as $reportName) {
             $export = "App\Exports\Export" . str_replace(' ', '', $reportName);
@@ -70,7 +72,8 @@ class GenerateReportJob implements ShouldQueue
         //delete spreadsheets from disk
         foreach($this->reportNames as $reportName) {
             $fileName = str_replace(' ', '_', $reportName);
-            @unlink("C:\wamp64\www\\tcdd-metrics\storage\app\\" . $fileName . "_" . $this->interval . ".xlsx");
+            @unlink($this->dir ? "C:\wamp64\www\\tcdd-metrics\storage\app\\test\\" . $fileName . "_" . $this->interval . ".xlsx"
+                : "C:\wamp64\www\\tcdd-metrics\storage\app\\" . $fileName . "_" . $this->interval . ".xlsx");
         }
     }
 }
