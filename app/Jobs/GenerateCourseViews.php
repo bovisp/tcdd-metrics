@@ -43,13 +43,13 @@ class GenerateCourseViews implements ShouldQueue
      */
     public function handle()
     {
-        //generate spreadsheet and save to disk
+        //generate spreadsheets and save to disk
         Excel::store(new ExportCourseViewsByCourse($this->startDateTime->timestamp, $this->endDateTime->timestamp), $this->dir ? $this->dir . "/" . "course_views_" . $this->interval . ".xlsx" : "course_views_" . $this->interval . ".xlsx");
 
-        //email spreadsheet
+        //email spreadsheets
         Mail::to('me@me.com')->send(new CourseViews($this->interval));
 
-        //delete spreadsheet from disk
+        //delete spreadsheets from disk
         @unlink("C:\wamp64\www\\tcdd-metrics\storage\app\course_views_" . $this->interval . ".xlsx");
     }
 }
