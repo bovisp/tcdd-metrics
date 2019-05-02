@@ -99,4 +99,30 @@ class GenerateReportTest extends TestCase
             @unlink($path . "\\" . $formattedReportName . "_" . $interval . ".xlsx");
         };
     }
+
+    /** @test */
+    public function it_requires_the_report_id_to_exist_in_the_database()
+    {
+        Mail::fake();
+        // insert report types
+        DB::connection('mysql')->table('report_types')->insert([
+            'id' => 1,
+            'name' => 'Course Completions'
+        ]);
+        DB::connection('mysql')->table('report_types')->insert([
+            'id' => 2,
+            'name' => 'Course Views'
+        ]);
+
+        $reportIds = [1, 999999999];
+        $startDate = Carbon::now()->subCentury();
+        $endDate = Carbon::now();
+        $request = [
+            'reportIds' => $reportIds,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ];
+
+        $this->post('/reports', $request)->assertSessionHasErrors(['reportIds.1']);
+    }
 }
