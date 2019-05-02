@@ -39,7 +39,7 @@ class Kernel extends ConsoleKernel
         //$schedule->job(new GenerateReportJob($subYearDateTime))->cron('0 6 1 1 *');
 
         // test
-        $schedule->job(new GenerateReportJob(null, Carbon::now()->subCentury()))->everyMinute();
+        $schedule->job(new GenerateReportJob(Carbon::now()->subCentury(), null, null))->everyMinute();
     }
 
     /**

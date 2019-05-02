@@ -18,6 +18,7 @@ class GenerateReportTest extends TestCase
     public function a_user_can_generate_a_report_and_save_it_to_disk()
     {
         $this->withoutExceptionHandling();
+        Mail::fake();
         // insert report types
         DB::connection('mysql')->table('report_types')->insert([
             'id' => 1,
@@ -40,7 +41,7 @@ class GenerateReportTest extends TestCase
         $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
 
         // post request to controller
-        $this->post('/generate-report', $request);
+        $this->post('/reports', $request);
 
         // assert each report has been saved to disk
         $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\test";
@@ -59,6 +60,7 @@ class GenerateReportTest extends TestCase
     public function a_user_can_generate_a_report_and_mail_it()
     {
         $this->withoutExceptionHandling();
+        Mail::fake();
         // insert report types
         DB::connection('mysql')->table('report_types')->insert([
             'id' => 1,
@@ -80,7 +82,7 @@ class GenerateReportTest extends TestCase
         ];
 
         // post request to controller
-        $this->post('/generate-report', $request);
+        $this->post('/reports', $request);
 
         //assert that email has been sent
         Mail::assertSent(TrainingMetricsReports::class);

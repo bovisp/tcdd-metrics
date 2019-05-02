@@ -33,8 +33,7 @@ class ScheduledJobsTest extends TestCase
         //dispatch GenerateReport
         $startDateTime = Carbon::now()->subYear();
         $endDateTime = Carbon::now();
-        $reportIds = [1,2];
-        GenerateReportJob::dispatch($reportIds, $startDateTime, $endDateTime);
+        GenerateReportJob::dispatch($startDateTime, $endDateTime, null);
 
         //assert that email has been sent
         Mail::assertSent(TrainingMetricsReports::class);
@@ -62,7 +61,7 @@ class ScheduledJobsTest extends TestCase
         $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
         $reportNames = ['Course Completions', 'Course Views'];
 
-        GenerateCourseViews::dispatch($startDateTime, $endDateTime);
+        GenerateReportJob::dispatch($startDateTime, $endDateTime, null);
 
         //assert that spreadsheets have been saved to disk
         foreach($reportNames as $reportName) {

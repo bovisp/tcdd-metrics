@@ -18,6 +18,7 @@ class ManageBadgeLanguagesTest extends TestCase
         $this->withoutExceptionHandling();
 
         //create a language
+
         $language = new \stdClass;
         $language->id = 1;
         $language->name = 'English';

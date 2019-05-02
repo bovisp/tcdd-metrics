@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Jobs\GenerateReportJob;
 use Illuminate\Support\Facades\DB;
 
-class GenerateReportController extends Controller
+class ReportController extends Controller
 {
     public function store() {
         request()->validate([
@@ -17,6 +17,12 @@ class GenerateReportController extends Controller
         $startDateTime = request()->input('startDateTime');
         $endDateTime = request()->input('endDateTime');
         
-        GenerateReportJob::dispatch($reportIds, $startDateTime, $endDateTime);
+        GenerateReportJob::dispatch($startDateTime, $endDateTime, $reportIds);
+
+        return response("Successfully generated reports.", 200);
+    }
+
+    public function index() {
+        return DB::connection('mysql')->table('report_types')->orderBy('name', 'asc')->get();
     }
 }

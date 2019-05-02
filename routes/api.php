@@ -55,6 +55,11 @@ Route::put('multilingual-courses/{multilingualCourse}', 'MultilingualCourseContr
 
 Route::get('multilingual-courses', 'MultilingualCourseController@index');
 
+// reports
+Route::post('reports', 'ReportController@store');
+
+Route::get('reports', 'ReportController@index');
+
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');
 // Route::post('/auth/forgotpassword', 'PasswordResetController@email');
