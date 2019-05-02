@@ -31,12 +31,25 @@ class ScheduledJobsTest extends TestCase
         ]);
 
         //dispatch GenerateReport
-        $startDateTime = Carbon::now()->subYear();
-        $endDateTime = Carbon::now();
-        GenerateReportJob::dispatch($startDateTime, $endDateTime, null);
+        $reportIds = [1,2];
+        $startDate = Carbon::now()->subYear();
+        $endDate = Carbon::now();
+        $interval = $startDate->toDateString() . "_" . $endDate->toDateString();
+        GenerateReportJob::dispatch($startDate, $endDate, $reportIds);
 
         //assert that email has been sent
         Mail::assertSent(TrainingMetricsReports::class);
+
+        // delete spreadsheets
+        $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\test";
+        foreach($reportIds as $reportId) {
+            $reportName = DB::connection('mysql')->table('report_types')
+                ->select('name')
+                ->where('id', '=', $reportId)->get()[0]->name;
+
+            $formattedReportName = str_replace(' ', '_', $reportName);
+            @unlink($path . "\\" . $formattedReportName . "_" . $interval . ".xlsx");
+        };
     }
 
     /** @test */
@@ -56,17 +69,22 @@ class ScheduledJobsTest extends TestCase
         ]);
 
         //dispatch GenerateReport
-        $startDateTime = Carbon::now()->subYear();
-        $endDateTime = Carbon::now();
-        $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
-        $reportNames = ['Course Completions', 'Course Views'];
-
-        GenerateReportJob::dispatch($startDateTime, $endDateTime, null);
+        $reportIds = [1,2];
+        $startDate = Carbon::now()->subYear();
+        $endDate = Carbon::now();
+        $interval = $startDate->toDateString() . "_" . $endDate->toDateString();
+        GenerateReportJob::dispatch($startDate, $endDate, $reportIds);
 
         //assert that spreadsheets have been saved to disk
-        foreach($reportNames as $reportName) {
-            $fileName = str_replace(" ", "_", $reportName);
-            $this->assertFileExists("C:\wamp64\www\\tcdd-metrics\storage\app\\test\\" . $fileName . "_" . $interval . ".xlsx");
-        }
+        $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\test";
+        foreach($reportIds as $reportId) {
+            $reportName = DB::connection('mysql')->table('report_types')
+                ->select('name')
+                ->where('id', '=', $reportId)->get()[0]->name;
+
+            $formattedReportName = str_replace(' ', '_', $reportName);
+            $this->assertFileExists($path . "\\" . $formattedReportName . "_" . $interval . ".xlsx");
+            @unlink($path . "\\" . $formattedReportName . "_" . $interval . ".xlsx");
+        };
     }
 }

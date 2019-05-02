@@ -11,7 +11,9 @@ class ReportController extends Controller
 {
     public function store() {
         request()->validate([
-            'reportIds.*' => 'exists:report_types,id'
+            'reportIds.*' => 'exists:report_types,id',
+            'startDate' => 'required',
+            'endDate' => 'required'
         ]);
         $reportIds = request()->input('reportIds');
         $startDateTime = Carbon::parse(request()->input('startDate'));

@@ -31,14 +31,14 @@ class GenerateReportTest extends TestCase
 
         // create request
         $reportIds = [1,2];
-        $startDateTime = Carbon::now()->subCentury();
-        $endDateTime = Carbon::now();
+        $startDate = Carbon::now()->subCentury();
+        $endDate = Carbon::now();
         $request = [
             'reportIds' => $reportIds,
-            'startDateTime' => $startDateTime,
-            'endDateTime' => $endDateTime
+            'startDate' => $startDate,
+            'endDate' => $endDate
         ];
-        $interval = $startDateTime->toDateString() . "_" . $endDateTime->toDateString();
+        $interval = $startDate->toDateString() . "_" . $endDate->toDateString();
 
         // post request to controller
         $this->post('/reports', $request);
@@ -73,12 +73,13 @@ class GenerateReportTest extends TestCase
 
         // create request
         $reportIds = [1,2];
-        $startDateTime = Carbon::now()->subCentury();
-        $endDateTime = Carbon::now();
+        $startDate = Carbon::now()->subCentury();
+        $endDate = Carbon::now();
+        $interval = $startDate->toDateString() . "_" . $endDate->toDateString();
         $request = [
             'reportIds' => $reportIds,
-            'startDateTime' => $startDateTime,
-            'endDateTime' => $endDateTime
+            'startDate' => $startDate,
+            'endDate' => $endDate
         ];
 
         // post request to controller
@@ -86,5 +87,16 @@ class GenerateReportTest extends TestCase
 
         //assert that email has been sent
         Mail::assertSent(TrainingMetricsReports::class);
+
+        // delete spreadsheets
+        $path = "C:\wamp64\www\\tcdd-metrics\storage\app\\test";
+        foreach($reportIds as $reportId) {
+            $reportName = DB::connection('mysql')->table('report_types')
+                ->select('name')
+                ->where('id', '=', $reportId)->get()[0]->name;
+
+            $formattedReportName = str_replace(' ', '_', $reportName);
+            @unlink($path . "\\" . $formattedReportName . "_" . $interval . ".xlsx");
+        };
     }
 }

@@ -29,7 +29,7 @@ class MultilingualCourseController extends Controller
         ]);
 
         return response(['multilingual_course_group_id' => $mlangcoursegroupid,
-            'message' => 'Successfully assigned courses to a multilingual course group.'], 200);
+            'message' => 'Successfully assigned courses to a course group.'], 200);
     }
 
     public function index() {
@@ -64,14 +64,14 @@ class MultilingualCourseController extends Controller
             ->select()->get();
         
         if(count($doNotDeleteCourseGroup) > 0) {
-            return response("Successfully deleted a course from a multilingual course group.", 200);
+            return response("Successfully deleted a course from a course group.", 200);
         }
 
         DB::connection('mysql')->table('multilingual_course_group')
             ->delete([
                 'id' => $mlangCourseGroupId
             ]);
-        return response("Successfully deleted this course and its multilingual course group.", 200);
+        return response("Successfully deleted this course and its course group.", 200);
     }
 
     public function update($multilingualCourseId) {
@@ -82,6 +82,6 @@ class MultilingualCourseController extends Controller
             'multilingual_course_group_id' => request('multilingual_course_group_id')
         ]);
 
-        return response("Successfully updated this course's multilingual course group.", 200);
+        return response("Successfully updated this course's course group.", 200);
     }
 }
