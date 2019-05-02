@@ -40,11 +40,13 @@ class ManageMultilingualCoursesTest extends TestCase
         $course->id = 7;
 
         $attributes = [
-            'course_id' => $course->id
+            'course_id' => $course->id,
+            'course_group_name' => 'GOES-R'
         ];
 
         $this->post('/multilingual-courses', $attributes);
-        $this->assertDatabaseHas('multilingual_course', $attributes);
+        $this->assertDatabaseHas('multilingual_course', ['course_id' => $course->id]);
+        $this->assertDatabaseHas('multilingual_course_group', ['name' => 'GOES-R']);
     }
 
     /** @test */

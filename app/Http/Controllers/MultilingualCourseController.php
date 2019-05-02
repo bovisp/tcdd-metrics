@@ -20,7 +20,7 @@ class MultilingualCourseController extends Controller
         if(request('multilingual_course_group_id')) {
             $mlangcoursegroupid = request('multilingual_course_group_id');
         } else {
-            $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId(['name' => '']);
+            $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId(['name' => request('course_group_name')]);
         }
 
         DB::connection('mysql')->table('multilingual_course')->insert([
@@ -29,7 +29,7 @@ class MultilingualCourseController extends Controller
         ]);
 
         return response(['multilingual_course_group_id' => $mlangcoursegroupid,
-        'message' => 'Successfully assigned courses to a multilingual course group.'], 200);
+            'message' => 'Successfully assigned courses to a multilingual course group.'], 200);
     }
 
     public function index() {
