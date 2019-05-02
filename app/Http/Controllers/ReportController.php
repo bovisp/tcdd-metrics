@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Jobs\GenerateReportJob;
 use Illuminate\Support\Facades\DB;
@@ -12,11 +13,10 @@ class ReportController extends Controller
         request()->validate([
             'reportIds.*' => 'exists:report_types,id'
         ]);
-
         $reportIds = request()->input('reportIds');
-        $startDateTime = request()->input('startDateTime');
-        $endDateTime = request()->input('endDateTime');
-        
+        $startDateTime = Carbon::parse(request()->input('startDate'));
+        $endDateTime = Carbon::parse(request()->input('endDate'));
+
         GenerateReportJob::dispatch($startDateTime, $endDateTime, $reportIds);
 
         return response("Successfully generated reports.", 200);
