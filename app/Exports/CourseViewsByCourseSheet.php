@@ -28,7 +28,7 @@ class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeading
 
     public function collection()
     {
-        $query = "SELECT l.courseid, c.fullname 'english_course_name', c.fullname 'french_course_name', lg.name as 'Language', count(*) as 'course_views', cc.name 'english_category_name', cc.name 'french_category_name'
+        $query = "SELECT l.courseid, cc.name 'english_category_name', cc.name 'french_category_name', c.fullname 'english_course_name', c.fullname 'french_course_name', lg.name as 'Language', count(*) as 'course_views'
         FROM mdl_logstore_standard_log l
         LEFT OUTER JOIN mdl_role_assignments a
             ON l.contextid = a.contextid
@@ -54,12 +54,12 @@ class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeading
     {
         return [
             'Course Id',
+            'English Category Name',
+            'French Category Name',
             'English Course Name',
             'French Course Name',
             'Course Language',
-            'Views',
-            'English Category Name',
-            'French Category Name'
+            'Views'
         ];
     }
 

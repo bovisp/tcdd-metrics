@@ -47,6 +47,8 @@ Route::post('reports', 'ReportController@store');
 
 Route::get('reports', 'ReportController@index');
 
+Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
+
 //show
 //edit
 //create
