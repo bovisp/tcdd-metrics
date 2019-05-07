@@ -22,7 +22,7 @@ class CourseLanguageController extends Controller
             'language_id' => request('language_id')
         ]);
 
-        return 'Course successfully assigned a language.';
+        return 'Course(s) successfully assigned a language.';
     }
 
     public function index() {

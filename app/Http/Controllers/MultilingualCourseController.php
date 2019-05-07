@@ -13,7 +13,7 @@ class MultilingualCourseController extends Controller
 
     public function store() {
         request()->validate([
-            'course_id' => 'exists:mysql2.mdl_course,id',
+            'course_id' => 'exists:mysql2.mdl_course,id'
         ]);
 
         //create multilingual course group if request does not include it
