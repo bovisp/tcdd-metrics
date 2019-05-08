@@ -20,6 +20,9 @@ class MultilingualCourseController extends Controller
         if(request('multilingual_course_group_id')) {
             $mlangcoursegroupid = request('multilingual_course_group_id');
         } else {
+            request()->validate([
+                'course_group_name' => 'required|unique:multilingual_course_group,name'
+            ]);
             $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId(['name' => request('course_group_name')]);
         }
 

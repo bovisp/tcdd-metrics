@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Cache;
 class ReportController extends Controller
 {
     public function store() {
+        if(sizeOf(request()->input('reportIds')) < 1) {
+            return response("Report Ids are required.", 422);
+        }
         request()->validate([
             'reportIds.*' => 'exists:report_types,id',
             'startDate' => 'required',

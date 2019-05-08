@@ -13,8 +13,8 @@ class CourseLanguageController extends Controller
 
     public function store() {
         request()->validate([
-            'language_id' => 'exists:languages,id',
-            'course_id' => 'exists:mysql2.mdl_course,id'
+            'language_id' => 'required|exists:languages,id',
+            'course_id' => 'required|exists:mysql2.mdl_course,id'
         ]);
 
         DB::connection('mysql')->table('course_language')->insert([
