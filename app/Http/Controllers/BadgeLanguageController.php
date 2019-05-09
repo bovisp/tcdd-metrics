@@ -30,7 +30,7 @@ class BadgeLanguageController extends Controller
             if($this->checkIfBadgeIssued($badgeLanguageId)) {
                 return response("Badge has already been issued.", 422);
             }
-        }
+        }//test
 
         DB::connection('mysql')->table('badge_language')
         ->where(['id' => $badgeLanguageId])
