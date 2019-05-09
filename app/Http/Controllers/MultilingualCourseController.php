@@ -40,7 +40,8 @@ class MultilingualCourseController extends Controller
             ->join('moodledb.mdl_course', 'multilingual_course.course_id', '=', 'moodledb.mdl_course.id')
             ->join('multilingual_course_group', 'multilingual_course.multilingual_course_group_id', '=', 'multilingual_course_group.id')
             ->select('multilingual_course.id', 'multilingual_course.course_id as course_id', 'moodledb.mdl_course.fullname as fullname', 'multilingual_course.multilingual_course_group_id as multilingual_course_group_id', 'multilingual_course_group.name as course_group_name')
-            ->orderBy('multilingual_course.multilingual_course_group_id', 'asc')
+            // ->orderBy('multilingual_course.multilingual_course_group_id', 'asc')
+            ->orderBy('multilingual_course.id', 'asc')
             ->get();
 
         return $this->formatOneColumn($collection, "fullname");

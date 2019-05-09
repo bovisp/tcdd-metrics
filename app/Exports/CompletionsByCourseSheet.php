@@ -57,11 +57,11 @@ class CompletionsByCourseSheet implements FromCollection, WithTitle, WithHeading
     public function headings(): array
     {
         return [
-            'Course/Course Group Id',
+            'Course/Group Id',
             'English Category Name',
             'French Category Name',
-            'English Course Name',
-            'French Course Name',
+            'English Course/Group Name',
+            'French Course/Group Name',
             'Completions'
         ];
     }
