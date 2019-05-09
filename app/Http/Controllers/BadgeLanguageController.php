@@ -9,8 +9,8 @@ class BadgeLanguageController extends Controller
 {
     public function store() {
         request()->validate([
-            'language_id' => 'exists:languages,id',
-            'badge_id' => 'exists:mysql2.mdl_badge,id'
+            'language_id' => 'required|exists:languages,id',
+            'badge_id' => 'required|exists:mysql2.mdl_badge,id'
         ]);
 
         DB::connection('mysql')->table('badge_language')->insert([
@@ -18,7 +18,7 @@ class BadgeLanguageController extends Controller
             'language_id' => request('language_id'),
         ]);
 
-        return 'Badge successfully assigned a language.';
+        return 'Badge(s) successfully assigned a language.';
     }
 
     public function update($badgeLanguageId) {

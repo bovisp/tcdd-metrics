@@ -9,7 +9,9 @@ class BadgeController extends Controller
 {
     public function index() {
         //only badges not already in badge-languages
-        $assignedBadgeIds = DB::connection('mysql')->table('badge_language')->select('badge_id')->get()->map(function ($assignedBadgeId) {
+        $assignedBadgeIds = DB::connection('mysql')->table('badge_language')
+        ->select('badge_id')->get()
+        ->map(function ($assignedBadgeId) {
             return $assignedBadgeId->badge_id;
         })->toArray();
         

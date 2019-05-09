@@ -13,14 +13,17 @@ class MultilingualCourseController extends Controller
 
     public function store() {
         request()->validate([
-            'course_id' => 'exists:mysql2.mdl_course,id',
+            'course_id' => 'exists:mysql2.mdl_course,id'
         ]);
 
         //create multilingual course group if request does not include it
         if(request('multilingual_course_group_id')) {
             $mlangcoursegroupid = request('multilingual_course_group_id');
         } else {
-            $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId(['name' => '']);
+            request()->validate([
+                'course_group_name' => 'required|unique:multilingual_course_group,name'
+            ]);
+            $mlangcoursegroupid = DB::connection('mysql')->table('multilingual_course_group')->insertGetId(['name' => request('course_group_name')]);
         }
 
         DB::connection('mysql')->table('multilingual_course')->insert([
@@ -28,8 +31,8 @@ class MultilingualCourseController extends Controller
             'multilingual_course_group_id' => $mlangcoursegroupid
         ]);
 
-        return ['multilingual_course_group_id' => $mlangcoursegroupid,
-        'message' => 'Successfully assigned a course to a multilingual course group.'];
+        return response(['multilingual_course_group_id' => $mlangcoursegroupid,
+            'message' => 'Successfully assigned courses to a course group.'], 200);
     }
 
     public function index() {
@@ -37,7 +40,8 @@ class MultilingualCourseController extends Controller
             ->join('moodledb.mdl_course', 'multilingual_course.course_id', '=', 'moodledb.mdl_course.id')
             ->join('multilingual_course_group', 'multilingual_course.multilingual_course_group_id', '=', 'multilingual_course_group.id')
             ->select('multilingual_course.id', 'multilingual_course.course_id as course_id', 'moodledb.mdl_course.fullname as fullname', 'multilingual_course.multilingual_course_group_id as multilingual_course_group_id', 'multilingual_course_group.name as course_group_name')
-            ->orderBy('multilingual_course.multilingual_course_group_id', 'asc')
+            // ->orderBy('multilingual_course.multilingual_course_group_id', 'asc')
+            ->orderBy('multilingual_course.id', 'asc')
             ->get();
 
         return $this->formatOneColumn($collection, "fullname");
@@ -64,14 +68,14 @@ class MultilingualCourseController extends Controller
             ->select()->get();
         
         if(count($doNotDeleteCourseGroup) > 0) {
-            return response("Successfully deleted a course from a multilingual course group.", 200);
+            return response("Successfully deleted a course from a course group.", 200);
         }
 
         DB::connection('mysql')->table('multilingual_course_group')
             ->delete([
                 'id' => $mlangCourseGroupId
             ]);
-        return response("Successfully deleted this course and its multilingual course group.", 200);
+        return response("Successfully deleted this course and its course group.", 200);
     }
 
     public function update($multilingualCourseId) {
@@ -82,6 +86,6 @@ class MultilingualCourseController extends Controller
             'multilingual_course_group_id' => request('multilingual_course_group_id')
         ]);
 
-        return response("Successfully updated this course's multilingual course group.", 200);
+        return response("Successfully updated this course's course group.", 200);
     }
 }
