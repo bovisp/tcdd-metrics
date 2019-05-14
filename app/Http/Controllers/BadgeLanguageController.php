@@ -18,7 +18,7 @@ class BadgeLanguageController extends Controller
             'language_id' => request('language_id'),
         ]);
 
-        return 'Badge(s) successfully assigned a language.';
+        return response('Badge(s) successfully assigned a language.', 200);
     }
 
     public function update($badgeLanguageId) {
@@ -30,14 +30,14 @@ class BadgeLanguageController extends Controller
             if($this->checkIfBadgeIssued($badgeLanguageId)) {
                 return response("Badge has already been issued.", 422);
             }
-        }//test
+        }
 
         DB::connection('mysql')->table('badge_language')
-        ->where(['id' => $badgeLanguageId])
-        ->update([
-            'badge_id' => request('badge_id'),
-            'language_id' => request('language_id')
-        ]);
+            ->where(['id' => $badgeLanguageId])
+            ->update([
+                'badge_id' => request('badge_id'),
+                'language_id' => request('language_id')
+            ]);
 
         return response("Successfully updated this badge's language.", 200);
     }
@@ -50,9 +50,9 @@ class BadgeLanguageController extends Controller
         }
 
         DB::connection('mysql')->table('badge_language')
-        ->delete([
-            'id' => $badgeLanguageId
-        ]);
+            ->delete([
+                'id' => $badgeLanguageId
+            ]);
 
         return response("Successfully deleted this badge's language.", 200);
     }
@@ -61,8 +61,10 @@ class BadgeLanguageController extends Controller
         return DB::connection('mysql')->table('badge_language')
             ->join('moodledb.mdl_badge', 'badge_language.badge_id', '=', 'moodledb.mdl_badge.id')
             ->join('languages', 'badge_language.language_id', '=', 'languages.id')
-            ->select('badge_language.id', 'badge_language.badge_id as badge_id', 'moodledb.mdl_badge.name as badge_name', 'languages.id as language_id', 'languages.name as language_name')
-            ->orderBy('badge_language.id', 'asc')
+            ->select('badge_language.id', 'badge_language.badge_id as badge_id', 
+                'moodledb.mdl_badge.name as badge_name', 'languages.id as language_id', 
+                'languages.name as language_name')
+            ->orderBy('badge_name', 'asc')
             ->get();
     }
 

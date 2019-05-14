@@ -12,7 +12,6 @@ class CourseController extends Controller
     use FormatCollection;
 
     public function index() {
-        //2 possible filters: not in course-languages and not in multilingual-courses
         $assignedCourseIds = [];
         if(request()->query('filter') === 'notinclang') {
             $assignedCourseIds = DB::connection('mysql')->table('course_language')->select('course_id')->get()->map(function ($assignedCourseId) {

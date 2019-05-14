@@ -35,6 +35,8 @@ Route::get('/languages', 'LanguageController@index');
 
 Route::get('/multilingual-course-groups', 'MultilingualCourseGroupController@index');
 
+Route::post('/multilingual-course-groups', 'MultilingualCourseGroupController@store');
+
 Route::get('/badges', 'BadgeController@index');
 
 Route::get('/courses', 'CourseController@index');

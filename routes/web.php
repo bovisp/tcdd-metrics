@@ -42,6 +42,15 @@ Route::put('multilingual-courses/{multilingualCourse}', 'MultilingualCourseContr
 
 Route::get('multilingual-courses', 'MultilingualCourseController@index');
 
+// multilingual course groups
+Route::get('/multilingual-course-groups', 'MultilingualCourseGroupController@index');
+
+Route::post('/multilingual-course-groups', 'MultilingualCourseGroupController@store');
+
+Route::delete('/multilingual-course-groups/{multilingualCourseGroup}', 'MultilingualCourseGroupController@destroy');
+
+Route::put('/multilingual-course-groups/{multilingualCourseGroup}', 'MultilingualCourseGroupController@update');
+
 // reports
 Route::post('reports', 'ReportController@store');
 

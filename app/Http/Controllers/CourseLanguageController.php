@@ -29,8 +29,10 @@ class CourseLanguageController extends Controller
         $collection = DB::connection('mysql')->table('course_language')
             ->join('moodledb.mdl_course', 'course_language.course_id', '=', 'moodledb.mdl_course.id')
             ->join('languages', 'course_language.language_id', '=', 'languages.id')
-            ->select('course_language.id', 'course_language.course_id as course_id', 'moodledb.mdl_course.fullname as fullname', 'course_language.language_id as language_id', 'languages.name as language_name')
-            ->orderBy('course_language.id', 'asc')
+            ->select('course_language.id', 'course_language.course_id as course_id', 
+                'moodledb.mdl_course.fullname as fullname', 'course_language.language_id as language_id', 
+                'languages.name as language_name')
+            ->orderBy('fullname', 'asc')
             ->get();
 
         return $this->formatOneColumn($collection, "fullname");
@@ -38,9 +40,9 @@ class CourseLanguageController extends Controller
 
     public function destroy($courseLanguageId) {
         DB::connection('mysql')->table('course_language')
-        ->delete([
-            'id' => $courseLanguageId
-        ]);
+            ->delete([
+                'id' => $courseLanguageId
+            ]);
 
         return response("Successfully deleted this course's language.", 200);
     }
@@ -51,11 +53,11 @@ class CourseLanguageController extends Controller
         ]);
 
         DB::connection('mysql')->table('course_language')
-        ->where(['id' => $courseLanguageId])
-        ->update([
-            'course_id' => request('course_id'),
-            'language_id' => request('language_id')
-        ]);
+            ->where(['id' => $courseLanguageId])
+            ->update([
+                'course_id' => request('course_id'),
+                'language_id' => request('language_id')
+            ]);
 
         return response("Successfully updated this course's language.", 200);
     }
