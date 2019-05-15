@@ -58,6 +58,10 @@ Route::get('reports', 'ReportController@index');
 
 Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
 
+//uploads
+Route::post('store', 'UploadController@store');
+Route::post('upload', 'UploadController@upload');
+
 //show
 //edit
 //create

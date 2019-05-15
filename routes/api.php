@@ -64,6 +64,10 @@ Route::get('reports', 'ReportController@index');
 
 Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
 
+//uploads
+Route::post('store', 'UploadController@store');
+Route::post('upload', 'UploadController@upload');
+
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');
 // Route::post('/auth/forgotpassword', 'PasswordResetController@email');
