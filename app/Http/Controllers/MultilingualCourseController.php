@@ -22,7 +22,7 @@ class MultilingualCourseController extends Controller
             'multilingual_course_group_id' => request('multilingual_course_group_id')
         ]);
 
-        return response('Successfully assigned courses to a course group.', 200);
+        return response('Successfully assigned course(s) to a course group.', 200);
     }
 
     public function index() {

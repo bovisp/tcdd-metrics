@@ -22,7 +22,10 @@ class CourseController extends Controller
                 return $assignedCourseId->course_id;
             })->toArray();
         }
-        $collection = collect(DB::connection('mysql2')->table('mdl_course')->whereNotIn('id', $assignedCourseIds)->orderBy('fullname', 'asc')->get());
+        $collection = collect(DB::connection('mysql2')->table('mdl_course')
+            ->where([['category', '!=', 29], ['visible', '!=', 0]])
+            ->whereNotIn('id', $assignedCourseIds)
+            ->orderBy('fullname', 'asc')->get());
         
         return $this->formatOneColumn($collection, "fullname");
     }
