@@ -3,35 +3,54 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Imports\CometUploadImport;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UploadController extends Controller
 {
-    public function store() {
-        $id = uniqid(true);
+    public function storeAccesses() {
+        $data = request()->all();
+        foreach($data as $sheet) {
+            foreach($sheet as $row) {
+                DB::connection('mysql')->table('comet_access')->insert([
+                    'email' => $row['email'],
+                    'last' => $row['last'],
+                    'first' => $row['first'],
+                    'module' => $row['Module'],
+                    'language' => $row['language'],
+                    'sessions' => $row['sessions'],
+                    'elapsed_time' => $row['elapsed_time'],
+                    'session_pages' => $row['session_pages'],
+                    'date' => $row['date']
+                ]);
+            }
+        }
+        return response('Successfully uploaded COMET data.', 200);
+    }
 
-        // return response("Successfully updated this badge's language.", 500);
-
-        echo json_encode([
-            'data' => [
-                'id' => $id
-            ]
-        ]);
+    public function storeCompletions() {
+        $data = request()->all();
+        foreach($data as $sheet) {
+            foreach($sheet as $row) {
+                DB::connection('mysql')->table('comet_completion')->insert([
+                    'email' => $row['email'],
+                    'last' => $row['Last_name'],
+                    'first' => $row['First_name'],
+                    'module' => $row['Module'],
+                    'language' => $row['Language'],
+                    'score' => $row['score'],
+                    'date_completed' => $row['date_completed']
+                ]);
+            }
+        }
+        return response('Successfully uploaded COMET data.', 200);
     }
 
     public function upload(Request $request) {
-        $path = $request->file('file')->store('/');
+        //$path = $request->file('file')->store('/');
 
-        return json_encode([
-            'data' => [
-                'success' => true,
-                'path' => $path
-            ]
-        ]);
-        //return response("Successfully updated this badge's language.", 500);
-
-        // if (isset($_FILES['file'], $_POST['id'])) {
-        //     move_uploaded_file($_FILES['file']['tmp_name'], 'C:\Users\MarshallAl\Downloads' . $_POST['id']);
-        // }
-
+        $data = Excel::toCollection(new CometUploadImport, $request->file('file'), null, \Maatwebsite\Excel\Excel::XML);
+        return $data;
     }
 }

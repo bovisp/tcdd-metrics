@@ -65,8 +65,9 @@ Route::get('reports', 'ReportController@index');
 Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
 
 //uploads
-Route::post('store', 'UploadController@store');
-Route::post('upload', 'UploadController@upload');
+Route::post('comet-access', 'UploadController@storeAccesses');
+Route::post('comet-completion', 'UploadController@storeCompletions');
+Route::post('comet-upload', 'UploadController@upload');
 
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');
@@ -82,3 +83,5 @@ Route::post('upload', 'UploadController@upload');
 // Route::group(['middleware' => 'jwt.refresh'], function(){
 //   Route::get('auth/refresh', 'AuthController@refresh');
 // });
+
+Route::get('correct-titles','FuzzySearchController@getCorrectTitles');
