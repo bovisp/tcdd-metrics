@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 class ManageBadgeLanguagesTest extends TestCase
 {
     use DatabaseMigrations;
+    
     /** @test */
     public function a_user_can_view_their_badge_languages() 
     {

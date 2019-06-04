@@ -49,7 +49,6 @@ class UploadController extends Controller
 
     public function upload(Request $request) {
         //$path = $request->file('file')->store('/');
-
         $data = Excel::toCollection(new CometUploadImport, $request->file('file'), null, \Maatwebsite\Excel\Excel::XML);
         return $data;
     }

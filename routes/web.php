@@ -59,8 +59,9 @@ Route::get('reports', 'ReportController@index');
 Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
 
 //uploads
-Route::post('store', 'UploadController@store');
-Route::post('upload', 'UploadController@upload');
+Route::post('comet-accesses', 'UploadController@storeAccesses');
+Route::post('comet-completions', 'UploadController@storeCompletions');
+Route::post('comet-uploads', 'UploadController@upload');
 
 //show
 //edit

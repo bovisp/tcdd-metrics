@@ -65,9 +65,9 @@ Route::get('reports', 'ReportController@index');
 Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
 
 //uploads
-Route::post('comet-access', 'UploadController@storeAccesses');
-Route::post('comet-completion', 'UploadController@storeCompletions');
-Route::post('comet-upload', 'UploadController@upload');
+Route::post('comet-accesses', 'UploadController@storeAccesses');
+Route::post('comet-completions', 'UploadController@storeCompletions');
+Route::post('comet-uploads', 'UploadController@upload');
 
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');
