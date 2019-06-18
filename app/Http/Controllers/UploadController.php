@@ -9,6 +9,15 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class UploadController extends Controller
 {
+    /**
+    * Stores COMET access data.
+    *
+    * @param array request must contain an array of sheets each being an array of rows
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function storeAccesses() {
         $data = request()->all();
         foreach($data as $sheet) {
@@ -29,6 +38,15 @@ class UploadController extends Controller
         return response('Successfully uploaded COMET data.', 200);
     }
 
+    /**
+    * Stores COMET completion data.
+    *
+    * @param array request must contain an array of sheets each being an array of rows
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function storeCompletions() {
         $data = request()->all();
         foreach($data as $sheet) {
@@ -47,9 +65,29 @@ class UploadController extends Controller
         return response('Successfully uploaded COMET data.', 200);
     }
 
+    /**
+    * Converts uploaded spreadsheet of COMET data to collection.
+    *
+    * @param array request includes a spreadsheet file
+    *
+    * @return array response includes a collection with the data from the spreadsheet
+    *
+    * @api
+    */
     public function upload(Request $request) {
-        //$path = $request->file('file')->store('/');
         $data = Excel::toCollection(new CometUploadImport, $request->file('file'), null, \Maatwebsite\Excel\Excel::XML);
         return $data;
+    }
+
+    /**
+    * Gets correct French comet module titles from database.
+    *
+    * @return array response includes array of correct French comet module titles
+    *
+    * @api
+    */
+    public function getCorrectTitles() {
+        return DB::connection('mysql')->select("SELECT c.id, c.titleFr
+        FROM `curltest`.`comet_french` c");
     }
 }

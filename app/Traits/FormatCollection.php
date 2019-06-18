@@ -6,6 +6,17 @@ use Illuminate\Support\Collection;
 
 trait FormatCollection {
 
+    /**
+    * Formats training portal course name into English and French columns.
+    *
+    * @param array $collection Collection of training portal courses
+    *
+    * @param string $englishColumn Name of column with English course information
+    *
+    * @param string $frenchColumn Name of column with French course information
+    *
+    * @return array $formattedCollection Collection after formatting English and French columns
+    */
     private function formatTwoColumns(Collection $collection, string $englishColumn, string $frenchColumn)
     {
         $formattedCollection = $collection->each(function ($x) use ($englishColumn, $frenchColumn){
@@ -26,6 +37,15 @@ trait FormatCollection {
         return $formattedCollection;
     }
 
+    /**
+    * Formats training portal course name into single column with both English and French names
+    *
+    * @param array $collection Collection of training portal courses
+    *
+    * @param string $column Name of column with both English and French course information
+    *
+    * @return array $formattedCollection Collection after formatting column with both English and French information
+    */
     private function formatOneColumn(Collection $collection, string $column)
     {
         $formattedCollection = $collection->each(function ($x) use ($column) {

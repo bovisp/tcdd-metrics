@@ -11,6 +11,15 @@ class CourseController extends Controller
 {
     use FormatCollection;
 
+    /**
+    * Returns array of training portal courses, optionally filtered by not in course languages or not in multilingual courses.
+    *
+    * @param string request optionally includes param "filter" with values of "notinclang" or "notinmlang"
+    *
+    * @return array response includes array of training portal courses
+    *
+    * @api
+    */
     public function index() {
         $assignedCourseIds = [];
         if(request()->query('filter') === 'notinclang') {

@@ -10,6 +10,51 @@ use Illuminate\Support\Facades\Cache;
 
 class ReportController extends Controller
 {
+    public function test() {
+        $cometCompletionsByModule = collect(DB::connection('mysql')->select("
+            SELECT ANY_VALUE(cmc.language) as 'language', cmc.module as 'englishTitle', 
+                   ANY_VALUE(cm2.title) as 'frenchTitle', 
+                   count(cmc.module) as 'englishCompletions', 
+                   count(cmc.module) as 'frenchCompletions',
+                   count(cmc.module) as 'totalCompletions'
+            FROM comet_completion cmc
+            LEFT OUTER JOIN `curltest`.`comet_modules` cm ON cmc.module = cm.title
+            LEFT OUTER JOIN `curltest`.`comet_modules` cm2 on cm.id = cm2.english_version_id
+            GROUP BY cmc.module
+            ORDER BY count(cmc.module) DESC
+        "));
+
+        foreach($cometCompletionsByModule as $x) {
+            if($x->frenchTitle) {
+                $frenchRow = $cometCompletionsByModule->where('englishTitle', '=', $x->frenchTitle)->first();
+                if($frenchRow) {
+                    $frenchRowKey = $cometCompletionsByModule->search($frenchRow);
+                    $x->frenchCompletions = $frenchRow->frenchCompletions;
+                    unset($cometCompletionsByModule[$frenchRowKey]);
+                }
+            } else {
+                $x->frenchTitle = $x->englishTitle;
+                if(strtolower($x->language) === "french") {
+                    $x->englishCompletions = 0;
+                } else {
+                    $x->frenchCompletions = 0;
+                }
+            }
+            $x->totalCompletions = $x->englishCompletions + $x->frenchCompletions;
+            unset($x->language);
+        };
+            
+        dd($cometCompletionsByModule);
+    }
+    /**
+    * Dispatches GenerateReportJob (generates and emails reports).
+    *
+    * @param array request contains array of reportIds, start and end dates
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function store() {
         if(sizeOf(request()->input('reportIds')) < 1) {
             return response("Report Ids are required.", 422);
@@ -28,10 +73,24 @@ class ReportController extends Controller
         return response("Successfully generated reports.", 200);
     }
 
+    /**
+    * Returns list of report types from database.
+    *
+    * @return array response includes array of report types
+    *
+    * @api
+    */
     public function index() {
         return DB::connection('mysql')->table('report_types')->orderBy('name', 'asc')->get();
     }
 
+    /**
+    * Returns minimum date with data for course completions and course views report types.
+    *
+    * @return array response includes array of timestamps
+    *
+    * @api
+    */
     public function minDateTimestamp() {
         $minDateCourseCompletions = Cache::rememberForever('minDateCourseCompletions', function () {
             $queryMinDateCourseCompletions = "SELECT min(bi.dateissued) as '1'

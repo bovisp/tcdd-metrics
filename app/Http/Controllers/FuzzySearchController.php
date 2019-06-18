@@ -10,21 +10,29 @@ use Illuminate\Support\Facades\Config;
 
 class FuzzySearchController extends Controller
 {
-    public function getOriginalTitles() {
-        $array = Excel::toArray(new OriginalTitlesImport, 'C:\wamp64\www\pdf-test\storage\app\public\MSC_funded_modules.csv');
-
-        $um = [];
-        for ($i = 0; $i < count($array[0]); $i++) {
-            array_push($um, $array[0][$i][0]);
-        }
-        return $um;
+    /**
+    * Converts uploaded spreadsheet of MSC-funded COMET modules to collection.
+    *
+    * @param array request includes a spreadsheet file
+    *
+    * @return array response includes a collection with the data from the spreadsheet
+    *
+    * @api
+    */
+    public function getOriginalTitles(Request $request) {
+        $data = Excel::toCollection(new OriginalTitlesImport, $request->file('file'), null, \Maatwebsite\Excel\Excel::CSV);
+        return $data;
     }
 
-    public function getCorrectTitles() {
-        return DB::connection('mysql')->select("SELECT c.id, c.titleFr
-        FROM `curltest`.`comet_french` c");
-    }
-
+    /**
+    * Stores correct titles of French MSC-funded COMET modules.
+    *
+    * @param array request includes array of correct titles
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function storeCorrectTitles() {;
         foreach(request()->all() as $title) {
             DB::connection('mysql')->insert("insert into `curltest`.`msc_comet_test` (titleFr) values (\"{$title}\")");
