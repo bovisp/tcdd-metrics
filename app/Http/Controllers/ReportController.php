@@ -43,7 +43,7 @@ class ReportController extends Controller
             $x->totalCompletions = $x->englishCompletions + $x->frenchCompletions;
             unset($x->language);
         };
-            
+
         dd($cometCompletionsByModule);
     }
     /**
@@ -117,6 +117,21 @@ class ReportController extends Controller
 
             return collect(DB::connection('mysql2')->select($queryMinDateCourseViews))[0];
         });
-        return [$minDateCourseCompletions, $minDateCourseViews];
+
+        $minDateCOMETCompletions = Cache::rememberForever('minDateCOMETCompletions', function () {
+            $queryMinDateCOMETCompletions = "SELECT UNIX_TIMESTAMP(min(date_completed)) as '3'
+                            FROM `comet_completion` c";
+
+            return collect(DB::connection('mysql')->select($queryMinDateCOMETCompletions))[0];
+        });
+
+        $minDateCOMETAccesses = Cache::rememberForever('minDateCOMETAccesses', function () {
+            $queryminDateCOMETAccesses = "SELECT UNIX_TIMESTAMP(min(date)) as '4'
+                            FROM `comet_access` c";
+
+            return collect(DB::connection('mysql')->select($queryminDateCOMETAccesses))[0];
+        });
+
+        return [$minDateCourseCompletions, $minDateCourseViews, $minDateCOMETCompletions, $minDateCOMETAccesses];
     }
 }

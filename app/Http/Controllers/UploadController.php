@@ -87,7 +87,9 @@ class UploadController extends Controller
     * @api
     */
     public function getCorrectTitles() {
-        return DB::connection('mysql')->select("SELECT c.id, c.titleFr
-        FROM `curltest`.`comet_french` c");
+        return DB::connection('mysql')->select("SELECT c.id, c.title
+        FROM `curltest`.`comet_modules` c
+        WHERE c.language = 'french'
+        ");
     }
 }

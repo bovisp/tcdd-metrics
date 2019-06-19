@@ -14,7 +14,8 @@ class ReportTypesSeeder extends Seeder
         DB::connection('mysql')->table('report_types')->insert([
             ['name' => 'Course Completions'],
             ['name' => 'Course Views'],
-            ['name' => 'COMET Completions']
+            ['name' => 'COMET Completions'],
+            ['name' => 'COMET Accesses'],
         ]);
     }
 }
