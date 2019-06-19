@@ -41,7 +41,7 @@ $page = 0;
             <table class="table-of-contents">
                 <tbody>
                     <tr>
-                        <td style="text-align:left"><a href="#moodleCat-{{ $category->id }}">{{ $category->name === "Other resources" ? "Autres ressources" : $category->name }}</a></td>
+                        <td style="text-align:left"><a href="#moodleCat-{{ $category->id }}">{{ $category->name }}</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -70,7 +70,7 @@ $page = 0;
             <table class="table-of-contents">
                 <tbody>
                     <tr>
-                        <td style="text-align:left"><a href="#cometCat-{{ $category->id }}">{{ $category->name === "MSC-funded COMET modules" ? "Modules COMET financés par le MSC" : "Autres modules d'intérêt de COMET" }}</a></td>
+                        <td style="text-align:left"><a href="#cometCat-{{ $category->id }}">{{ $category->name }}</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -146,7 +146,7 @@ $page = 0;
     @foreach($cometCourses as $category)
         @if(count($category->courses) > 0)
             <div id="cometCat-{{ $category->id }}">
-                <h3 style="margin-bottom: 0rem;">{{ $category->name === "MSC-funded COMET modules" ? "Modules COMET financés par le MSC" : "Autres modules d'intérêt de COMET" }}</h3>
+                <h3 style="margin-bottom: 0rem;">{{ $category->name }}</h3>
                 @foreach($category->courses as $cometCourse)
                     <?php $courseCount++; ?>
                     <div id="comet-{{ $cometCourse->id }}">

@@ -34,7 +34,7 @@ class CatalogController extends Controller
 
         $courseFormatter = new CourseFormatter();
 
-        $moodleCourses = $this->getMoodleCourses();
+        $moodleCourses = $this->getMoodleCourses($lang);
         $formattedMoodleCourses = $courseFormatter->formatMoodleCourses($lang, $moodleCourses);
         $cometCourses = $this->getCometCourses($lang);
         $formattedCometCourses = $courseFormatter->formatCometCourses($lang, $cometCourses);
@@ -61,19 +61,24 @@ class CatalogController extends Controller
     *
     * @api
     */
-    private function getMoodleCourses() {
+    private function getMoodleCourses($lang) {
         $moodleCourseCategories = collect(DB::connection('mysql2')
             ->select("SELECT c.id, c.name
             FROM `mdl_course_categories` c
             WHERE c.id NOT IN (29)
             ORDER BY c.name"));
 
-        $moodleCourseCategories->sortBy('name');
-
-        $moodleCourseCategories->push((object)[
-            "id" => 0,
-            "name" => "Other resources"
-        ]);
+        if($lang === "fr") {
+            $moodleCourseCategories->push((object)[
+                "id" => 0,
+                "name" => "Autres ressources"
+            ]);
+        } else if($lang === "en") {
+            $moodleCourseCategories->push((object)[
+                "id" => 0,
+                "name" => "Other Resources"
+            ]);
+        }
 
         $moodleCoursesByCategory = $moodleCourseCategories->map(function ($category) {
             // if($category->id === 0) {
@@ -133,7 +138,7 @@ class CatalogController extends Controller
         if($lang === "fr") {
             $cometCoursesMscFunded = (object)[
                 "id" => 1,
-                "name" => "MSC-funded COMET modules",
+                "name" => "Modules COMET financés par le MSC",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
                             FROM `curltest`.`comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
@@ -143,7 +148,7 @@ class CatalogController extends Controller
 
             $cometCoursesOther = (object)[
                 "id" => 2,
-                "name" => "Other COMET modules of interest",
+                "name" => "Autres modules d'intérêt de COMET",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
                             FROM `curltest`.`comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = FALSE
@@ -154,7 +159,7 @@ class CatalogController extends Controller
         } else if ($lang === "en") {
             $cometCoursesMscFunded = (object)[
                 "id" => 1,
-                "name" => "MSC-funded COMET modules",
+                "name" => "MSC-funded COMET Modules",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
                             FROM `curltest`.`comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
@@ -164,7 +169,7 @@ class CatalogController extends Controller
 
             $cometCoursesOther = (object)[
                 "id" => 2,
-                "name" => "Other COMET modules of interest",
+                "name" => "Other COMET Modules of Interest",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
                             FROM `curltest`.`comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = FALSE

@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class CourseFormatter {
     /**
@@ -17,8 +18,10 @@ class CourseFormatter {
     * @return array returns formatted collection of course information
     */
     public function formatMoodleCourses($lang, $collection) {
+
+        $formattedCollection = new Collection;
         if($lang === 'fr') { //abstract into method
-            $frenchFormattedCollection = $collection->each(function ($category) {
+            $formattedCollection = $collection->each(function ($category) {
                 $original = $category->name;
                 $category->name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">[\s\S]*<\/span> <span lang=\"fr\" class=\"multilang\">|<\/span>/", "", $category->name));
                 if($original === $category->name) { // only run the second preg_replace if the first did nothing
@@ -47,12 +50,10 @@ class CourseFormatter {
                 });
 
                 $category->courses = $category->courses->sortBy('longTitle');
-
             });
-            return $frenchFormattedCollection;
         }
         else if($lang === 'en') {
-            $englishFormattedCollection = $collection->each(function ($category) {
+            $formattedCollection = $collection->each(function ($category) {
                 $original = $category->name;
                 $category->name = trim(preg_replace("/<span lang=\"en\" class=\"multilang\">|<\/span> <span lang=\"fr\" class=\"multilang\">(.*)<\/span>/", "", $category->name));
                 if($original === $category->name) { // only run the second preg_replace if the first did nothing
@@ -81,10 +82,11 @@ class CourseFormatter {
                 });
 
                 $category->courses = $category->courses->sortBy('longTitle');
-
             });
-            return $englishFormattedCollection;
         }
+
+        $formattedCollection = $formattedCollection->sortBy('name');
+        return $formattedCollection;
     }
 
     /**
