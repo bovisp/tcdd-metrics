@@ -11,6 +11,15 @@ class CourseController extends Controller
 {
     use FormatCollection;
 
+    /**
+    * Returns array of training portal courses, optionally filtered by not in course languages or not in multilingual courses.
+    *
+    * @param string request optionally includes param "filter" with values of "notinclang" or "notinmlang"
+    *
+    * @return array response includes array of training portal courses
+    *
+    * @api
+    */
     public function index() {
         $assignedCourseIds = [];
         if(request()->query('filter') === 'notinclang') {
@@ -22,7 +31,10 @@ class CourseController extends Controller
                 return $assignedCourseId->course_id;
             })->toArray();
         }
-        $collection = collect(DB::connection('mysql2')->table('mdl_course')->whereNotIn('id', $assignedCourseIds)->orderBy('fullname', 'asc')->get());
+        $collection = collect(DB::connection('mysql2')->table('mdl_course')
+            ->where([['category', '!=', 29], ['visible', '!=', 0]])
+            ->whereNotIn('id', $assignedCourseIds)
+            ->orderBy('fullname', 'asc')->get());
         
         return $this->formatOneColumn($collection, "fullname");
     }

@@ -11,6 +11,15 @@ class CourseLanguageController extends Controller
 {
     use FormatCollection;
 
+    /**
+    * Stores new course language in database.
+    *
+    * @param array request includes course Id and language Id
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function store() {
         request()->validate([
             'language_id' => 'required|exists:languages,id',
@@ -25,6 +34,13 @@ class CourseLanguageController extends Controller
         return 'Course(s) successfully assigned a language.';
     }
 
+    /**
+    * Returns existing course languages
+    *
+    * @return array response includes array of course languages
+    *
+    * @api
+    */
     public function index() {
         $collection = DB::connection('mysql')->table('course_language')
             ->join('moodledb.mdl_course', 'course_language.course_id', '=', 'moodledb.mdl_course.id')
@@ -38,6 +54,15 @@ class CourseLanguageController extends Controller
         return $this->formatOneColumn($collection, "fullname");
     }
 
+    /**
+    * Deletes course language from database.
+    *
+    * @param array request includes course language Id
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function destroy($courseLanguageId) {
         DB::connection('mysql')->table('course_language')
             ->delete([
@@ -47,6 +72,15 @@ class CourseLanguageController extends Controller
         return response("Successfully deleted this course's language.", 200);
     }
 
+    /**
+    * Updates name of existing course group.
+    *
+    * @param array request includes course language Id
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function update($courseLanguageId) {
         request()->validate([
             'language_id' => 'exists:languages,id'

@@ -42,6 +42,8 @@ class CourseViewsByCourseSheet implements FromCollection, WithTitle, WithHeading
         AND l.courseid > 1
         AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
         AND l.timecreated BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
+        AND c.category != 29
+        AND c.visible != 0
         GROUP BY l.courseid";
 
         $collection = collect(DB::connection('mysql2')->select($query));

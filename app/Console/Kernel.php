@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Carbon\Carbon;
 use App\Jobs\GenerateReportJob;
+use App\Jobs\GenerateCatalogJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -39,7 +40,7 @@ class Kernel extends ConsoleKernel
         //$schedule->job(new GenerateReportJob($subYearDateTime))->cron('0 6 1 1 *');
 
         // test
-        $schedule->job(new GenerateReportJob(Carbon::now()->subCentury(), null, null))->everyMinute();
+        $schedule->job(new GenerateCatalogJob())->everyMinute();
     }
 
     /**

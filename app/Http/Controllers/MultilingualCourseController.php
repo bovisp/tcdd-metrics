@@ -11,6 +11,15 @@ class MultilingualCourseController extends Controller
 {
     use FormatCollection;
 
+    /**
+    * Stores new multilingual course in database.
+    *
+    * @param array request includes course Id and course group Id
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function store() {
         request()->validate([
             'course_id' => 'required|exists:mysql2.mdl_course,id',
@@ -22,9 +31,16 @@ class MultilingualCourseController extends Controller
             'multilingual_course_group_id' => request('multilingual_course_group_id')
         ]);
 
-        return response('Successfully assigned courses to a course group.', 200);
+        return response('Successfully assigned course(s) to a course group.', 200);
     }
 
+    /**
+    * Returns existing multilingual courses.
+    *
+    * @return array response includes array of multilingual courses
+    *
+    * @api
+    */
     public function index() {
         $collection = DB::connection('mysql')->table('multilingual_course')
             ->join('moodledb.mdl_course', 'multilingual_course.course_id', '=', 'moodledb.mdl_course.id')
@@ -36,7 +52,16 @@ class MultilingualCourseController extends Controller
         return $this->formatOneColumn($collection, "fullname");
     }
 
-    public function destroy($multilingualCourseId) {        
+    /**
+    * Deletes multilingual course from database.
+    *
+    * @param array request includes multilingual course Id
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
+    public function destroy($multilingualCourseId) {
         // also remove course group if it no longer has any associated courses
         $mlangCourseGroupId = DB::connection('mysql')->table('multilingual_course')
             ->where('id', '=', $multilingualCourseId)
@@ -67,6 +92,15 @@ class MultilingualCourseController extends Controller
         return response("Successfully deleted this course and its course group.", 200);
     }
 
+    /**
+    * Updates course group of existing multilingual course.
+    *
+    * @param array request includes course group Id and multilingual course Id
+    *
+    * @return array response includes message and status code
+    *
+    * @api
+    */
     public function update($multilingualCourseId) {
         DB::connection('mysql')->table('multilingual_course')
             ->where(['id' => $multilingualCourseId])

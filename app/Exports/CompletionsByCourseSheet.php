@@ -35,6 +35,8 @@ class CompletionsByCourseSheet implements FromCollection, WithTitle, WithHeading
         WHERE bi.badgeid IN (44,45,8,22,11,12,27,28,34,31,43,42)
         AND c.id NOT IN (SELECT ml.course_id FROM `tcdd-metrics`.`multilingual_course` ml)
         AND bi.dateissued BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
+        AND c.category != 29
+        AND c.visible != 0
         GROUP BY c.id)
         UNION ALL
         (SELECT mlg.id as 'course_group_id', GROUP_CONCAT(DISTINCT cc.name) as 'english_category_name', GROUP_CONCAT(DISTINCT cc.name) as 'french_category_name', mlg.name as 'course_group_name', mlg.name as 'course_group_name', count(mlg.id) as 'completions'
@@ -46,6 +48,8 @@ class CompletionsByCourseSheet implements FromCollection, WithTitle, WithHeading
         INNER JOIN `tcdd-metrics`.`multilingual_course_group` mlg ON ml.multilingual_course_group_id = mlg.id
         WHERE bi.badgeid IN (44,45,8,22,11,12,27,28,34,31,43,42)
         AND bi.dateissued BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
+        AND c.category != 29
+        AND c.visible != 0
         GROUP BY mlg.id)";
         
         $collection = collect(DB::connection('mysql2')->select($query));

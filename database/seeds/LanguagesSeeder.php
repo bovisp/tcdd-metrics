@@ -12,8 +12,12 @@ class LanguagesSeeder extends Seeder
     public function run()
     {
         DB::connection('mysql')->table('languages')->insert([
-            ['name' => 'English'],
-            ['name' => 'French']
+            [   'id' => 1,
+                'name' => 'English'
+            ],
+            [   'id' => 2,
+                'name' => 'French'
+            ]
         ]);
     }
 }

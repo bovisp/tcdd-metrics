@@ -36,6 +36,8 @@ class CompletionsByBadgeSheet implements FromCollection, WithTitle, WithHeadings
         LEFT OUTER JOIN `tcdd-metrics`.`languages` l ON bl.language_id = l.id
         WHERE bi.badgeid IN (44,45,8,22,11,12,27,28,34,31,43,42)
         AND bi.dateissued BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
+        AND c.category != 29
+        AND c.visible != 0
         GROUP BY bi.badgeid
         ORDER BY c.id";
 
