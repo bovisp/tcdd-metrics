@@ -1,57 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App;
 
-use App\CourseFormatter;
-use Barryvdh\DomPDF\PDF;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 
-class CatalogController extends Controller
-{
-    /**
-    * Generates and downloads pdf file of training portal and COMET courses.
-    *
-    * @return array response initiates download of pdf file
-    *
-    * @api
-    */
-    public function downloadPDF() {
-        // get language from request
-
-        request()->validate([
-            'language_id' => 'required|exists:languages,id'
-        ]);
-
-        $lang = '';
-        if(request('language_id') === 1) {
-            $lang = 'en';
-        } else if (request('language_id') === 2) {
-            $lang = "fr";
-        }
-
-        $courseFormatter = new CourseFormatter();
-
-        $moodleCourses = $this->getMoodleCourses($lang);
-        $formattedMoodleCourses = $courseFormatter->formatMoodleCourses($lang, $moodleCourses);
-        $cometCourses = $this->getCometCourses($lang);
-        $formattedCometCourses = $courseFormatter->formatCometCourses($lang, $cometCourses);
-
-        $data = ['lang' => $lang,
-            'moodleCourses' => $formattedMoodleCourses,
-            'cometCourses' => $formattedCometCourses];
-
-        if($lang === 'fr') {
-            $pdf = \PDF::loadView('frenchCoursesByCategoryPDF', $data);
-        } else if($lang === 'en') {
-            $pdf = \PDF::loadView('englishCoursesByCategoryPDF', $data);
-        }
-  
-        return $pdf->download('test.pdf');
-    }
-
+class GetCourses {
     /**
     * Returns training portal course information from database.
     *
@@ -61,7 +15,7 @@ class CatalogController extends Controller
     *
     * @api
     */
-    private function getMoodleCourses($lang) {
+    public function getMoodleCourses($lang) {
         $moodleCourseCategories = collect(DB::connection('mysql2')
             ->select("SELECT c.id, c.name
             FROM `mdl_course_categories` c
@@ -88,7 +42,6 @@ class CatalogController extends Controller
             //         FROM mdl_course c
             //         WHERE c.category != 29
             //         AND c.id != 1
-            //         AND c.visible != 0
             //         AND c.id NOT IN (
             //             SELECT c.id
             //             FROM `mdl_course` c
@@ -133,13 +86,13 @@ class CatalogController extends Controller
     *
     * @api
     */
-    private function getCometCourses($lang) {
+    public function getCometCourses($lang) {
         $cometCoursesOther = new Collection;
 
         if($lang === "fr") {
             $cometCoursesMscFunded = (object)[
                 "id" => 1,
-                "name" => "Modules COMET financés par le MSC",
+                "name" => "Modules COMET Financés par le MSC",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
                             FROM `curltest`.`comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
@@ -149,7 +102,7 @@ class CatalogController extends Controller
 
             $cometCoursesOther = (object)[
                 "id" => 2,
-                "name" => "Autres modules d'intérêt de COMET",
+                "name" => "Autres Modules d'intérêt de COMET",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
                             FROM `curltest`.`comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = FALSE

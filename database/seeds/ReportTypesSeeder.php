@@ -14,11 +14,11 @@ class ReportTypesSeeder extends Seeder
         DB::connection('mysql')->table('report_types')->insert([
             [
                 'id' => 1,
-                'name' => 'Course Completions'
+                'name' => 'Training Portal Course Completions'
             ],
             [
                 'id' => 2,
-                'name' => 'Course Views'
+                'name' => 'Training Portal Course Views'
             ],
             [
                 'id' => 3,

@@ -28,6 +28,8 @@ class CourseFormatter {
                     $category->name = trim(preg_replace("/{mlang en}[\s\S]*{mlang}[\s\S]*{mlang fr}|{mlang}[\s\S]*/", "", $category->name));
                 }
 
+                $category->name = ucwords($category->name);
+
                 $category->courses->each(function ($row) {
                     $summaryArr = preg_split("/<p>{mlang} /", $row->keywords);
                     $frenchSummary = count($summaryArr) > 1 ? $summaryArr[1] : "";
@@ -59,6 +61,8 @@ class CourseFormatter {
                 if($original === $category->name) { // only run the second preg_replace if the first did nothing
                     $category->name = trim(preg_replace("/{mlang en}|{mlang}{mlang fr}(.*){mlang}|{mlang} {mlang fr}(.*){mlang}/", "", $category->name));
                 }
+
+                $category->name = ucwords($category->name);
 
                 $category->courses->each(function ($row) {
                     $summaryArr = preg_split("/<p>{mlang} /", $row->keywords);

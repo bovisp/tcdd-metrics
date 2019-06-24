@@ -55,6 +55,14 @@ Route::get('correct-titles','UploadController@getCorrectTitles');
 //catalogs
 Route::post('generate-pdf','CatalogController@downloadPDF');
 
+//comet list
+Route::get('comet-modules', 'CometListController@index');
+Route::put('comet-modules', 'CometListController@update');
+
+//tp list
+Route::get('tp-modules', 'TrainingPortalController@index');
+Route::put('tp-modules', 'TrainingPortalController@update');
+
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');
 // Route::post('/auth/forgotpassword', 'PasswordResetController@email');
