@@ -3,49 +3,70 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Charts\Frappe;
+use App\Charts\testChart;
 use Illuminate\Http\Request;
 use App\Jobs\GenerateReportJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Khill\Lavacharts\Laravel\LavachartsFacade\Lava;
 
 class ReportController extends Controller
 {
-    public function test() {
-        $cometCompletionsByModule = collect(DB::connection('mysql')->select("
-            SELECT ANY_VALUE(cmc.language) as 'language', cmc.module as 'englishTitle', 
-                   ANY_VALUE(cm2.title) as 'frenchTitle', 
-                   count(cmc.module) as 'englishCompletions', 
-                   count(cmc.module) as 'frenchCompletions',
-                   count(cmc.module) as 'totalCompletions'
-            FROM comet_completion cmc
-            LEFT OUTER JOIN `curltest`.`comet_modules` cm ON cmc.module = cm.title
-            LEFT OUTER JOIN `curltest`.`comet_modules` cm2 on cm.id = cm2.english_version_id
-            GROUP BY cmc.module
-            ORDER BY count(cmc.module) DESC
-        "));
+    // public function lavaTest() {
+    //     $stocksTable = \Lava::DataTable();
 
-        foreach($cometCompletionsByModule as $x) {
-            if($x->frenchTitle) {
-                $frenchRow = $cometCompletionsByModule->where('englishTitle', '=', $x->frenchTitle)->first();
-                if($frenchRow) {
-                    $frenchRowKey = $cometCompletionsByModule->search($frenchRow);
-                    $x->frenchCompletions = $frenchRow->frenchCompletions;
-                    unset($cometCompletionsByModule[$frenchRowKey]);
-                }
-            } else {
-                $x->frenchTitle = $x->englishTitle;
-                if(strtolower($x->language) === "french") {
-                    $x->englishCompletions = 0;
-                } else {
-                    $x->frenchCompletions = 0;
-                }
-            }
-            $x->totalCompletions = $x->englishCompletions + $x->frenchCompletions;
-            unset($x->language);
-        };
+    //     $stocksTable->addStringColumn('Course')
+    //     ->addNumberColumn('English')
+    //     ->addNumberColumn('French');
 
-        dd($cometCompletionsByModule);
-    }
+    //     $stocksTable->addRow([
+    //         'One', rand(800,1000), rand(800,1000)
+    //     ]);
+    //     $stocksTable->addRow([
+    //         'Two', rand(800,1000), rand(800,1000)
+    //     ]);
+    //     $stocksTable->addRow([
+    //         'Three', rand(800,1000), rand(800,1000)
+    //     ]);
+    //     $stocksTable->addRow([
+    //         'Four', rand(800,1000), rand(800,1000)
+    //     ]);
+    //     $stocksTable->addRow([
+    //         'Five', rand(800,1000), rand(800,1000)
+    //     ]);
+
+    //     $lineChart = \Lava::LineChart('MyStocks', $stocksTable);
+
+    //     $columnChart = \Lava::ColumnChart('MyStocks', $stocksTable, [
+    //         'isStacked' => true
+    //     ]);
+
+    //     $pdf = \PDF::loadView('lavaCharts');
+    //     return $pdf->download('test.pdf');
+
+    //     return view('lavaCharts');
+    // }
+
+    // public function laravelChartsTest() {
+    //     $chart = new testChart;
+    //     $chart->labels(['One', 'Two', 'Three', 'Four', 'Five']);
+    //     $chart->dataset('My dataset 1', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
+    //     $chart->dataset('My dataset 2', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
+
+    //     $pdf = \PDF::loadView('laravelCharts', compact('chart'));
+    //     return $pdf->download('test.pdf');
+
+    //     return view('laravelCharts', compact('chart'));
+
+    //     // $chart = new Frappe;
+    //     // $chart->labels(['One', 'Two', 'Three', 'Four', 'Five']);
+    //     // $chart->dataset('My dataset 1', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
+    //     // $chart->dataset('My dataset 2', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
+
+    //     // return view('laravelCharts', compact('chart'));
+    // }
+
     /**
     * Dispatches GenerateReportJob (generates and emails reports).
     *
@@ -55,7 +76,7 @@ class ReportController extends Controller
     *
     * @api
     */
-    public function store() {
+    public function emailReports() {
         if(sizeOf(request()->input('reportIds')) < 1) {
             return response("Report Ids are required.", 422);
         }

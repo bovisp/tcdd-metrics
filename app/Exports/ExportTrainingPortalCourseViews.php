@@ -4,19 +4,19 @@ namespace App\Exports;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Exports\CompletionsByBadgeSheet;
-use App\Exports\CompletionsByCourseSheet;
+use App\Exports\CourseViewsByCourseSheet;
 use Maatwebsite\Excel\Concerns\Exportable;
-use App\Exports\CompletionsByCourseGroupSheet;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use App\Exports\CourseViewsByCourseCategorySheet;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class ExportCourseCompletions implements WithMultipleSheets
+class ExportTrainingPortalCourseViews implements WithMultipleSheets
 {
     use Exportable;
 
     protected $startTimestamp;
     protected $endTimestamp;
+    protected $interval;
 
     public function __construct($startTimestamp, $endTimestamp)
     {
@@ -27,8 +27,9 @@ class ExportCourseCompletions implements WithMultipleSheets
     public function sheets(): array
     {
         $sheets = [];
-        $sheets = [new CompletionsByBadgeSheet($this->startTimestamp, $this->endTimestamp),
-            new CompletionsByCourseSheet($this->startTimestamp, $this->endTimestamp)];
+        $sheets = [new CourseViewsByCourseSheet($this->startTimestamp, $this->endTimestamp),
+            new CourseViewsByCourseCategorySheet($this->startTimestamp, $this->endTimestamp),
+            new CourseViewsByParentCategorySheet($this->startTimestamp, $this->endTimestamp)];
 
         return $sheets;
     }

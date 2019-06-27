@@ -42,8 +42,8 @@ Route::put('multilingual-courses/{multilingualCourse}', 'MultilingualCourseContr
 Route::get('multilingual-courses', 'MultilingualCourseController@index');
 
 // reports
-Route::post('reports', 'ReportController@store');
-Route::get('reports', 'ReportController@index');
+Route::post('reports', 'ReportController@emailReports');
+Route::get('report-types', 'ReportController@index');
 Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
 
 //uploads

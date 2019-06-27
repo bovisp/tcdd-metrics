@@ -24,6 +24,9 @@
         "vue-template-compiler": "^2.6.9"
     },
     "dependencies": {
-        "eslint": "^5.15.3"
+        "eslint": "^5.15.3",
+        "node": "^12.4.0",
+        "npm": "^6.9.0",
+        "puppeteer": "^1.18.0"
     }
 }

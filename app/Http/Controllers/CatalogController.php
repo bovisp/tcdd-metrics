@@ -58,8 +58,6 @@ class CatalogController extends Controller
     * Query returns courses that issue a completion badge, are visible, and are not archived
     *
     * @return array response includes array of training portal courses
-    *
-    * @api
     */
     private function getMoodleCourses($lang) {
         $moodleCourseCategories = collect(DB::connection('mysql2')
@@ -71,7 +69,7 @@ class CatalogController extends Controller
         if($lang === "fr") {
             $moodleCourseCategories->push((object)[
                 "id" => 0,
-                "name" => "Autres ressources"
+                "name" => "Autres Ressources"
             ]);
         } else if($lang === "en") {
             $moodleCourseCategories->push((object)[
@@ -81,26 +79,27 @@ class CatalogController extends Controller
         }
 
         $moodleCoursesByCategory = $moodleCourseCategories->map(function ($category) {
-            // if($category->id === 0) {
-            //     $category = (array)$category;
-            //     $category['courses'] = collect(DB::connection('mysql2')
-            //         ->select("SELECT c.id, c.fullname as 'longTitle', c.fullname as 'shortTitle', c.summary as 'keywords', c.summary as 'estimatedtime', c.timecreated as 'timecreated', c.timecreated as 'lastmodified', c.summary as 'description', c.summary as 'objectives'
-            //         FROM mdl_course c
-            //         WHERE c.category != 29
-            //         AND c.id != 1
-            //         AND c.visible != 0
-            //         AND c.id NOT IN (
-            //             SELECT c.id
-            //             FROM `mdl_course` c
-            //             INNER JOIN `mdl_badge` b on b.courseid = c.id
-            //             AND c.visible != 0
-            //             AND b.id IN (44,45,8,22,11,12,27,28,34,31,43,42)
-            //             GROUP BY c.id
-            //         )"));
-            //     $category = (object)$category;
+            if($category->id === 0) {
+                $category = (array)$category;
+                $category['courses'] = collect(DB::connection('mysql2')
+                    ->select("SELECT c.id, c.fullname as 'longTitle', c.fullname as 'shortTitle', c.summary as 'keywords', c.summary as 'estimatedtime', c.timecreated as 'timecreated', c.timecreated as 'lastmodified', c.summary as 'description', c.summary as 'objectives'
+                    FROM mdl_course c
+                    INNER JOIN `tcdd-metrics`.`course_catalog` cc ON c.id = cc.course_id
+                    WHERE c.category != 29
+                    AND c.id != 1
+                    AND c.visible != 0
+                    AND c.id NOT IN (
+                        SELECT c.id
+                        FROM `mdl_course` c
+                        INNER JOIN `mdl_badge` b on b.courseid = c.id
+                        AND c.visible != 0
+                        AND b.id IN (44,45,8,22,11,12,27,28,34,31,43,42)
+                        GROUP BY c.id
+                    )"));
+                $category = (object)$category;
 
-            //     return $category;
-            // }
+                return $category;
+            }
 
             $categoryId = $category->id;
             $category = (array)$category;
@@ -130,8 +129,6 @@ class CatalogController extends Controller
     * @param string $lang is the language of the courses (English or French)
     *
     * @return array response includes array of MSC-funded COMET courses
-    *
-    * @api
     */
     private function getCometCourses($lang) {
         $cometCoursesOther = new Collection;

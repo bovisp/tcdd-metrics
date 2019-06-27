@@ -37,7 +37,7 @@ $page = 0;
     <h2>Table de mati&egrave;res</h2>
     <h3><a href="#tp-courses">Cours sur le Portail de formation</a></h3>
     @foreach ($moodleCourses as $category)
-        @if(count($category->courses) > 0)
+        @if(count($category->courses) > 0 && $category->id != 0)
             <table class="table-of-contents">
                 <tbody>
                     <tr>
@@ -63,6 +63,31 @@ $page = 0;
             @endforeach
         @endif
     @endforeach
+    @if(count($moodleCourses->where('id', '=', 0)->first()->courses) > 0)
+        <table class="table-of-contents">
+            <tbody>
+                <tr>
+                    <td style="text-align:left"><a href="#moodleCat-{{ $category->id }}">{{ $moodleCourses->where('id', '=', 0)->first()->name }}</a></td>
+                </tr>
+            </tbody>
+        </table>
+        @foreach ($moodleCourses->where('id', '=', 0)->first()->courses as $course)
+            @if($course->id != 83)
+                <?php
+                $courseCount++;
+                ?>
+                <table class="table-of-contents">
+                    <tbody>
+                        <tr>
+                            <td><a href="#moodle-{{ $course->id }}">&nbsp;&nbsp;&nbsp;&nbsp;{{ $course->shortTitle }}</a></td>
+                            <td></td>
+                            <td><a href="#moodle-{{ $course->id }}">{{ $page = ceil($courseCount / $coursesPerPage) + $numOfToCPages }}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
+        @endforeach
+    @endif
 
     <?php $courseCount = 0; ?>
 
@@ -99,7 +124,7 @@ $page = 0;
 
     <h2 id="tp-courses">Cours sur le Portail de formation</h2>
     @foreach ($moodleCourses as $category)
-        @if(count($category->courses) > 0)
+        @if(count($category->courses) > 0 && $category->id != 0)
             <div>
                 <h3 id="moodleCat-{{ $category->id }}" style="margin-bottom: 0rem;">{{ $category->name }}</h3>
                 @foreach($category->courses as $course)
@@ -140,6 +165,46 @@ $page = 0;
             </div>
         @endif
     @endforeach
+    @if(count($moodleCourses->where('id', '=', 0)->first()->courses) > 0)
+        <div>
+            <h3 id="moodleCat-{{ $category->id }}" style="margin-bottom: 0rem;">{{ $moodleCourses->where('id', '=', 0)->first()->name }}</h3>
+            @foreach($moodleCourses->where('id', '=', 0)->first()->courses as $course)
+                @if($course->id != 83)
+                    <?php 
+                    $courseCount++;
+                    ?>
+                    <div id="moodle-{{ $course->id }}">
+                        <table style="width: 100%">
+                            <tbody>
+                                <tr>
+                                    <td colspan="2"><h4 style="margin-bottom: .25rem;"><a href="http://msc-educ-smc.cmc.ec.gc.ca/moodle/course/view.php?id={{ $course->id }}">{{ $course->longTitle }}</a></h4></td>
+                                </tr>
+                                <tr>
+                                    @if($course->lastmodified > $course->timecreated)
+                                        <td><strong>Date modifi&eacute;e</strong>: {{ $course->lastmodified }}</td>
+                                    @else
+                                        <td><strong>Date de publication</strong>: {{ $course->timecreated }}</td>
+                                    @endif
+                                    <td style="text-align: right;"><strong>Dur&eacute;e estim&eacute;e</strong>: {{ $course->estimatedtime }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><p style="margin-top: .25rem;"><strong>Description</strong>: {{ $course->description }}</p></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        @if($courseCount % $coursesPerPage !== 0 && !$loop->last)
+                            <div style="margin: 1rem 0 1rem 0;">
+                                <div style="margin: 0 auto; width: 30%; height: 1px; border-top: 1px solid #000;"></div>
+                            </div>
+                        @endif
+                    </div>
+                    @if ($courseCount % $coursesPerPage === 0)
+                        <p style="page-break-before: always"></p>
+                    @endif
+                @endif
+            @endforeach
+        </div>
+    @endif
 
     <?php $courseCount = 0; ?>
 

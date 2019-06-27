@@ -58,12 +58,17 @@ Route::get('reports', 'ReportController@index');
 
 Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
 
-Route::get('test', 'ReportController@test');
+// charts
+Route::get('lava-test', 'ReportController@lavaTest');
+Route::get('laravel-charts-test', 'ReportController@laravelChartsTest');
+Route::get('chart-pdf', 'ChartController@index');
 
 //uploads
 Route::post('comet-accesses', 'UploadController@storeAccesses');
 Route::post('comet-completions', 'UploadController@storeCompletions');
 Route::post('comet-uploads', 'UploadController@upload');
+
+Route::get('test-catalog', 'CatalogController@getMoodleCourses');
 
 //show
 //edit
