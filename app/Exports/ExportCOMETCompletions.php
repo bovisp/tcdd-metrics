@@ -7,16 +7,18 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use App\Traits\GetCometData;
 
 class ExportCOMETCompletions implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
+    use GetCometData;
 
     protected $startTimestamp;
     protected $endTimestamp;
-
+    
+    /**
+    * @return \Illuminate\Support\Collection
+    */
     public function __construct($startTimestamp, $endTimestamp)
     {
         $this->startTimestamp = $startTimestamp;
@@ -25,43 +27,7 @@ class ExportCOMETCompletions implements FromCollection, WithTitle, WithHeadings,
 
     public function collection()
     {
-        $cometCompletionsByModule = collect(DB::connection('mysql')->select("
-            SELECT ANY_VALUE(cmc.language) as 'language', cmc.module as 'englishTitle', 
-                   ANY_VALUE(cm2.title) as 'frenchTitle', 
-                   count(cmc.module) as 'englishCompletions', 
-                   count(cmc.module) as 'frenchCompletions',
-                   count(cmc.module) as 'totalCompletions'
-            FROM comet_completion cmc
-            LEFT OUTER JOIN `curltest`.`comet_modules` cm ON cmc.module = cm.title
-            LEFT OUTER JOIN `curltest`.`comet_modules` cm2 on cm.id = cm2.english_version_id
-            WHERE UNIX_TIMESTAMP(cmc.date_completed) BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
-            GROUP BY cmc.module
-            ORDER BY count(cmc.module) DESC
-        "));
-
-        foreach($cometCompletionsByModule as $x) {
-            if($x->frenchTitle) {
-                $frenchRow = $cometCompletionsByModule->where('englishTitle', '=', $x->frenchTitle)->first();
-                if($frenchRow) {
-                    $frenchRowKey = $cometCompletionsByModule->search($frenchRow);
-                    $x->frenchCompletions = $frenchRow->frenchCompletions;
-                    unset($cometCompletionsByModule[$frenchRowKey]);
-                } else {
-                    $x->frenchCompletions = 0;
-                }
-            } else {
-                $x->frenchTitle = $x->englishTitle;
-                if(strtolower($x->language) === "french") {
-                    $x->englishCompletions = 0;
-                } else {
-                    $x->frenchCompletions = 0;
-                }
-            }
-            $x->totalCompletions = $x->englishCompletions + $x->frenchCompletions;
-            unset($x->language);
-        };
-            
-        return $cometCompletionsByModule->sortByDesc('totalCompletions');
+        return $this->getCometCompletions($this->startTimestamp, $this->endTimestamp)->sortByDesc('totalCompletions');
     }
 
     public function headings(): array

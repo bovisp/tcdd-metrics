@@ -10,9 +10,14 @@ use App\Jobs\GenerateReportJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Khill\Lavacharts\Laravel\LavachartsFacade\Lava;
+use App\Traits\GetCometData;
+use App\Traits\GetTrainingPortalData;
 
 class ReportController extends Controller
 {
+    use GetCometData;
+    use GetTrainingPortalData;
+
     // public function lavaTest() {
     //     $stocksTable = \Lava::DataTable();
 
@@ -67,6 +72,8 @@ class ReportController extends Controller
     //     // return view('laravelCharts', compact('chart'));
     // }
 
+
+
     /**
     * Dispatches GenerateReportJob (generates and emails reports).
     *
@@ -92,6 +99,22 @@ class ReportController extends Controller
         GenerateReportJob::dispatch($startDateTime, $endDateTime, $reportIds);
 
         return response("Successfully generated reports.", 200);
+    }
+
+    public function cometAccesses() {
+        return $this->getCometAccesses(0, 4102444800)->sortByDesc('totalCompletions');
+    }
+
+    public function cometCompletions() {
+        return $this->getCometCompletions(0, 4102444800)->sortByDesc('totalCompletions');
+    }
+
+    public function trainingPortalViews() {
+        return $this->getTrainingPortalViews(0, 4102444800)->sortByDesc('views');
+    }
+
+    public function trainingPortalCompletions() {
+        return $this->getTrainingPortalCompletions(0, 4102444800)->sortByDesc('completions');
     }
 
     /**

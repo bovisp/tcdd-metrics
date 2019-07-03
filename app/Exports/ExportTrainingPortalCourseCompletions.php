@@ -10,10 +10,11 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use App\Exports\CompletionsByCourseGroupSheet;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use App\Traits\GetTrainingPortalData;
 
-class ExportTrainingPortalCourseCompletions implements WithMultipleSheets
+class ExportTrainingPortalCourseCompletions implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
 {
-    use Exportable;
+    use GetTrainingPortalData;
 
     protected $startTimestamp;
     protected $endTimestamp;
@@ -24,12 +25,24 @@ class ExportTrainingPortalCourseCompletions implements WithMultipleSheets
         $this->endTimestamp = $endTimestamp;
     }
 
-    public function sheets(): array
+    public function collection()
     {
-        $sheets = [];
-        $sheets = [new CompletionsByBadgeSheet($this->startTimestamp, $this->endTimestamp),
-            new CompletionsByCourseSheet($this->startTimestamp, $this->endTimestamp)];
+        return $this->getTrainingPortalCompletions($this->startTimestamp, $this->endTimestamp)->sortByDesc('totalCompletions');
+    }
 
-        return $sheets;
+    public function headings(): array
+    {
+        return [
+            'English Title',
+            'French Title',
+            'English Completions',
+            'French Completions',
+            'Total Completions'
+        ];
+    }
+
+    public function title(): string
+    {
+        return 'Training Portal Completions';
     }
 }

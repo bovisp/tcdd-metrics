@@ -45,6 +45,10 @@ Route::get('multilingual-courses', 'MultilingualCourseController@index');
 Route::post('reports', 'ReportController@emailReports');
 Route::get('report-types', 'ReportController@index');
 Route::get('reports/minDateTimestamps', 'ReportController@minDateTimestamp');
+Route::get('reports/comet-accesses', 'ReportController@cometAccesses');
+Route::get('reports/comet-completions', 'ReportController@cometCompletions');
+Route::get('reports/tp-views', 'ReportController@trainingPortalViews');
+Route::get('reports/tp-completions', 'ReportController@trainingPortalCompletions');
 
 //uploads
 Route::post('comet-accesses', 'UploadController@storeAccesses');
@@ -62,6 +66,11 @@ Route::put('comet-modules', 'CometListController@update');
 //tp list
 Route::get('tp-modules', 'TrainingPortalController@index');
 Route::put('tp-modules', 'TrainingPortalController@update');
+
+//webinars
+Route::get('webinar-attendance', 'WebinarAttendanceController@index');
+Route::post('webinar-attendance', 'WebinarAttendanceController@store');
+Route::get('webinars', 'WebinarController@index');
 
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');
