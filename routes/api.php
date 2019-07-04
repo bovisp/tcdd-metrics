@@ -71,6 +71,8 @@ Route::put('tp-modules', 'TrainingPortalController@update');
 Route::get('webinar-attendance', 'WebinarAttendanceController@index');
 Route::post('webinar-attendance', 'WebinarAttendanceController@store');
 Route::get('webinars', 'WebinarController@index');
+Route::put('webinar-attendance/{course}', 'WebinarAttendanceController@update');
+Route::delete('webinar-attendance/{course}', 'WebinarAttendanceController@destroy');
 
 // Route::post('/auth/register', 'AuthController@register');
 // Route::post('/auth/login', 'AuthController@login');
