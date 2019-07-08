@@ -4,17 +4,15 @@ namespace App\Exports;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Exports\CompletionsByBadgeSheet;
-use App\Exports\CompletionsByCourseSheet;
+use App\Exports\CourseViewsByCourseSheet;
 use Maatwebsite\Excel\Concerns\Exportable;
-use App\Exports\CompletionsByCourseGroupSheet;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use App\Exports\CourseViewsByCourseCategorySheet;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-use App\Traits\GetTrainingPortalData;
 
-class ExportTrainingPortalCourseCompletions implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
+class ExportTrainingPortalCourseCompletions implements WithMultipleSheets
 {
-    use GetTrainingPortalData;
+    use Exportable;
 
     protected $startTimestamp;
     protected $endTimestamp;
@@ -25,24 +23,12 @@ class ExportTrainingPortalCourseCompletions implements FromCollection, WithTitle
         $this->endTimestamp = $endTimestamp;
     }
 
-    public function collection()
+    public function sheets(): array
     {
-        return $this->getTrainingPortalCompletions($this->startTimestamp, $this->endTimestamp)->sortByDesc('totalCompletions');
-    }
+        $sheets = [];
+        $sheets = [new CompletionsByBadgeSheet($this->startTimestamp, $this->endTimestamp),
+            new CompletionsByCourseSheet($this->startTimestamp, $this->endTimestamp)];
 
-    public function headings(): array
-    {
-        return [
-            'English Title',
-            'French Title',
-            'English Completions',
-            'French Completions',
-            'Total Completions'
-        ];
-    }
-
-    public function title(): string
-    {
-        return 'Training Portal Completions';
+        return $sheets;
     }
 }

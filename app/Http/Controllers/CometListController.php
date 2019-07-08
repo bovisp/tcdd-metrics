@@ -10,7 +10,7 @@ class CometListController extends Controller
     function index () {
         $collection = collect(DB::connection('mysql')
             ->select("SELECT *
-            FROM `curltest`.`comet_modules`
+            FROM `comet_modules`
             WHERE msc_funded = FALSE
             ORDER BY title"));
 
@@ -23,7 +23,7 @@ class CometListController extends Controller
         // store new blacklist
         $data = request()->all();
         foreach($data as $row) {
-            DB::connection('mysql')->table('curltest.comet_modules')
+            DB::connection('mysql')->table('comet_modules')
             ->where('id', $row['id'])
             ->update([
                 'include_in_catalog' => $row['include_in_catalog'],

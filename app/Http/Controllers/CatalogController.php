@@ -45,10 +45,10 @@ class CatalogController extends Controller
 
         if($lang === 'fr') {
             $pdf = \PDF::loadView('frenchCoursesByCategoryPDF', $data);
-        } else if($lang === 'en') {
-            $pdf = \PDF::loadView('englishCoursesByCategoryPDF', $data);
+            return $pdf->download('test.pdf');
         }
-  
+
+        $pdf = \PDF::loadView('englishCoursesByCategoryPDF', $data);
         return $pdf->download('test.pdf');
     }
 
@@ -138,9 +138,9 @@ class CatalogController extends Controller
                 "id" => 1,
                 "name" => "Modules COMET financés par le MSC",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
-                            FROM `curltest`.`comet_modules` ct
+                            FROM `comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
-                            AND ct.language = 'french'
+                            AND ct.language_id = 2
                             ORDER BY ct.title"))
             ];
 
@@ -148,9 +148,9 @@ class CatalogController extends Controller
                 "id" => 2,
                 "name" => "Autres modules d'intérêt de COMET",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
-                            FROM `curltest`.`comet_modules` ct
+                            FROM `comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = FALSE
-                            AND ct.language = 'french'
+                            AND ct.language_id = 2
                             ORDER BY ct.title"))
             ];
 
@@ -159,9 +159,9 @@ class CatalogController extends Controller
                 "id" => 1,
                 "name" => "MSC-funded COMET Modules",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
-                            FROM `curltest`.`comet_modules` ct
+                            FROM `comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
-                            AND ct.language = 'english'
+                            AND ct.language_id = 1
                             ORDER BY ct.title"))
             ];
 
@@ -169,9 +169,9 @@ class CatalogController extends Controller
                 "id" => 2,
                 "name" => "Other COMET Modules of Interest",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
-                            FROM `curltest`.`comet_modules` ct
+                            FROM `comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = FALSE
-                            AND ct.language = 'english'
+                            AND ct.language_id = 1
                             ORDER BY ct.title"))
             ];
         }

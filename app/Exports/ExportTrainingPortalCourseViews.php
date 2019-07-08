@@ -16,7 +16,6 @@ class ExportTrainingPortalCourseViews implements WithMultipleSheets
 
     protected $startTimestamp;
     protected $endTimestamp;
-    protected $interval;
 
     public function __construct($startTimestamp, $endTimestamp)
     {

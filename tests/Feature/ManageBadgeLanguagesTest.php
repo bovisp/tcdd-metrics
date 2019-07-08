@@ -11,22 +11,18 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ManageBadgeLanguagesTest extends TestCase
 {
-    use DatabaseMigrations;
+    // use DatabaseMigrations;
     
     /** @test */
     public function a_user_can_view_their_badge_languages() 
     {
-        $this->withoutExceptionHandling();
+        //$this->withoutExceptionHandling();
 
         //create a language
 
         $language = new \stdClass;
         $language->id = 1;
         $language->name = 'English';
-        DB::connection('mysql')->table('languages')->insert([
-            'id' => $language->id,
-            'name' => $language->name
-        ]);
 
         //create a badge
         $badge = new \stdClass;
@@ -35,9 +31,7 @@ class ManageBadgeLanguagesTest extends TestCase
 
         $attributes = [
             'language_id' => $language->id,
-            'language_name' => $language->name,
-            'badge_id' => $badge->id,
-            'badge_name' => $badge->name
+            'badge_id' => $badge->id
         ];
 
         $this->post('/badge-languages', $attributes);

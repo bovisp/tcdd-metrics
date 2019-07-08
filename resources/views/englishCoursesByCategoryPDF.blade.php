@@ -3,6 +3,7 @@ $numOfToCPages = 4;
 $coursesPerPage = 4;
 $courseCount = 0;
 $page = 0;
+$pageBreak = false;
 ?>
 <!DOCTYPE html>
 <html>
@@ -131,6 +132,7 @@ $page = 0;
                     @if($course->id != 83)
                         <?php 
                         $courseCount++;
+                        $pageBreak = false;
                         ?>
                         <div id="moodle-{{ $course->id }}">
                             <table style="width: 100%">
@@ -159,6 +161,7 @@ $page = 0;
                         </div>
                         @if ($courseCount % $coursesPerPage === 0)
                             <p style="page-break-before: always"></p>
+                            <?php $pageBreak = true; ?>
                         @endif
                     @endif
                 @endforeach
@@ -172,6 +175,7 @@ $page = 0;
                 @if($course->id != 83)
                     <?php 
                     $courseCount++;
+                    $pageBreak = false;
                     ?>
                     <div id="moodle-{{ $course->id }}">
                         <table style="width: 100%">
@@ -200,15 +204,19 @@ $page = 0;
                     </div>
                     @if ($courseCount % $coursesPerPage === 0)
                         <p style="page-break-before: always"></p>
+                        <?php $pageBreak = true; ?>
                     @endif
                 @endif
             @endforeach
         </div>
     @endif
 
-    <?php $courseCount = 0; ?>
     
-    <p style="page-break-before: always"></p>
+    @if($pageBreak === false)
+        <p style="page-break-before: always"></p>
+    @endif
+    
+    <?php $courseCount = 0; ?>
 
     <h2 id="comet-courses">COMET Courses</h2>
     <i>Please note: the French version of this catalog may include additional courses not listed here.</i>

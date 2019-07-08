@@ -27,8 +27,8 @@ trait GetCometData {
                    count(cma.module) as 'frenchCompletions',
                    count(cma.module) as 'totalCompletions'
             FROM comet_access cma
-            LEFT OUTER JOIN `curltest`.`comet_modules` cm ON cma.module = cm.title
-            LEFT OUTER JOIN `curltest`.`comet_modules` cm2 on cm.id = cm2.english_version_id
+            LEFT OUTER JOIN `comet_modules` cm ON cma.module = cm.title
+            LEFT OUTER JOIN `comet_modules` cm2 on cm.id = cm2.english_version_id
             WHERE UNIX_TIMESTAMP(cma.date) BETWEEN {$startTimestamp} AND {$endTimestamp}
             GROUP BY cma.module
             ORDER BY count(cma.module) DESC
@@ -77,8 +77,8 @@ trait GetCometData {
                    count(cmc.module) as 'frenchCompletions',
                    count(cmc.module) as 'totalCompletions'
             FROM comet_completion cmc
-            LEFT OUTER JOIN `curltest`.`comet_modules` cm ON cmc.module = cm.title
-            LEFT OUTER JOIN `curltest`.`comet_modules` cm2 on cm.id = cm2.english_version_id
+            LEFT OUTER JOIN `comet_modules` cm ON cmc.module = cm.title
+            LEFT OUTER JOIN `comet_modules` cm2 on cm.id = cm2.english_version_id
             WHERE UNIX_TIMESTAMP(cmc.date_completed) BETWEEN {$startTimestamp} AND {$endTimestamp}
             GROUP BY cmc.module
             ORDER BY count(cmc.module) DESC

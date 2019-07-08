@@ -3,6 +3,7 @@ $numOfToCPages = 3;
 $coursesPerPage = 4;
 $courseCount = 0;
 $page = 0;
+$pageBreak = false;
 ?>
 <!DOCTYPE html>
 <html>
@@ -47,9 +48,7 @@ $page = 0;
             </table>
             @foreach ($category->courses as $course)
                 @if($course->id != 82)
-                    <?php
-                    $courseCount++;
-                    ?>
+                    <?php $courseCount++; ?>
                     <table class="table-of-contents">
                         <tbody>
                             <tr>
@@ -73,9 +72,7 @@ $page = 0;
         </table>
         @foreach ($moodleCourses->where('id', '=', 0)->first()->courses as $course)
             @if($course->id != 83)
-                <?php
-                $courseCount++;
-                ?>
+                <?php $courseCount++; ?>
                 <table class="table-of-contents">
                     <tbody>
                         <tr>
@@ -131,6 +128,7 @@ $page = 0;
                     @if($course->id != 82)
                         <?php 
                         $courseCount++;
+                        $pageBreak = false;
                         ?>
                         <div id="moodle-{{ $course->id }}">
                             <table style="width: 100%">
@@ -159,6 +157,7 @@ $page = 0;
                         </div>
                         @if ($courseCount % $coursesPerPage === 0)
                             <p style="page-break-before: always"></p>
+                            <?php $pageBreak = true; ?>
                         @endif
                     @endif
                 @endforeach
@@ -172,6 +171,7 @@ $page = 0;
                 @if($course->id != 83)
                     <?php 
                     $courseCount++;
+                    $pageBreak = false;
                     ?>
                     <div id="moodle-{{ $course->id }}">
                         <table style="width: 100%">
@@ -200,15 +200,19 @@ $page = 0;
                     </div>
                     @if ($courseCount % $coursesPerPage === 0)
                         <p style="page-break-before: always"></p>
+                        <?php $pageBreak = true; ?>
                     @endif
                 @endif
             @endforeach
         </div>
     @endif
 
+    @if($pageBreak === false)
+        <p style="page-break-before: always"></p>
+    @endif
+    
     <?php $courseCount = 0; ?>
 
-    <p style="page-break-before: always"></p>
 
     <h2 id="comet-courses">Cours COMET</h2>
     <i>Remarque: la version anglaise de ce catalogue peut comporter des cours supplémentaires non répertoriés ici.</i>

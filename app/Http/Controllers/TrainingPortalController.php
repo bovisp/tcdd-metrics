@@ -43,14 +43,6 @@ class TrainingPortalController extends Controller
     function update () {
         // store new blacklist
         $data = request()->all();
-        // foreach($data as $row) {
-        //     DB::connection('mysql')->table('curltest.comet_modules')
-        //     ->where('id', $row['id'])
-        //     ->update([
-        //         'include_in_catalog' => $row['include_in_catalog'],
-        //     ]);
-        // }
-
         foreach($data as $row) {
             if($row['id'] && !$row['include_in_catalog']) {
                 DB::connection('mysql')->select("

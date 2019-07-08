@@ -94,9 +94,9 @@ class GetCourses {
                 "id" => 1,
                 "name" => "Modules COMET Financés par le MSC",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
-                            FROM `curltest`.`comet_modules` ct
+                            FROM `comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
-                            AND ct.language = 'french'
+                            AND ct.language_id = 2
                             ORDER BY ct.title"))
             ];
 
@@ -104,9 +104,9 @@ class GetCourses {
                 "id" => 2,
                 "name" => "Autres Modules d'intérêt de COMET",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
-                            FROM `curltest`.`comet_modules` ct
+                            FROM `comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = FALSE
-                            AND ct.language = 'french'
+                            AND ct.language_id = 2
                             ORDER BY ct.title"))
             ];
 
@@ -115,9 +115,9 @@ class GetCourses {
                 "id" => 1,
                 "name" => "MSC-funded COMET Modules",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
-                            FROM `curltest`.`comet_modules` ct
+                            FROM `comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
-                            AND ct.language = 'english'
+                            AND ct.language_id = 1
                             ORDER BY ct.title"))
             ];
 
@@ -125,9 +125,9 @@ class GetCourses {
                 "id" => 2,
                 "name" => "Other COMET Modules of Interest",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
-                            FROM `curltest`.`comet_modules` ct
+                            FROM `comet_modules` ct
                             WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = FALSE
-                            AND ct.language = 'english'
+                            AND ct.language_id = 1
                             ORDER BY ct.title"))
             ];
         }
