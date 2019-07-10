@@ -24,6 +24,8 @@ class CreateCometAccess extends Migration
             $table->float('elapsed_time')->nullable();
             $table->unsignedInteger('session_pages')->nullable();
             $table->date('date');
+
+            // $table->unique(['email', 'module', 'date']); Syntax error or access violation: 1071 Specified key was too long; max key length is 1000 bytes???
         });
     }
 

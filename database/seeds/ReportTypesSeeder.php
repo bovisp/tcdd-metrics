@@ -28,6 +28,14 @@ class ReportTypesSeeder extends Seeder
                 'id' => 4,
                 'name' => 'COMET Accesses'
             ],
+            [
+                'id' => 5,
+                'name' => 'Stay Connected Webinar Views'
+            ],
+            [
+                'id' => 6,
+                'name' => 'Stay Connected Webinar Attendance'
+            ],
         ]);
     }
 }
