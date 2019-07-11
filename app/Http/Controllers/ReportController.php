@@ -18,62 +18,6 @@ class ReportController extends Controller
     use GetCometData;
     use GetTrainingPortalData;
 
-    // public function lavaTest() {
-    //     $stocksTable = \Lava::DataTable();
-
-    //     $stocksTable->addStringColumn('Course')
-    //     ->addNumberColumn('English')
-    //     ->addNumberColumn('French');
-
-    //     $stocksTable->addRow([
-    //         'One', rand(800,1000), rand(800,1000)
-    //     ]);
-    //     $stocksTable->addRow([
-    //         'Two', rand(800,1000), rand(800,1000)
-    //     ]);
-    //     $stocksTable->addRow([
-    //         'Three', rand(800,1000), rand(800,1000)
-    //     ]);
-    //     $stocksTable->addRow([
-    //         'Four', rand(800,1000), rand(800,1000)
-    //     ]);
-    //     $stocksTable->addRow([
-    //         'Five', rand(800,1000), rand(800,1000)
-    //     ]);
-
-    //     $lineChart = \Lava::LineChart('MyStocks', $stocksTable);
-
-    //     $columnChart = \Lava::ColumnChart('MyStocks', $stocksTable, [
-    //         'isStacked' => true
-    //     ]);
-
-    //     $pdf = \PDF::loadView('lavaCharts');
-    //     return $pdf->download('test.pdf');
-
-    //     return view('lavaCharts');
-    // }
-
-    // public function laravelChartsTest() {
-    //     $chart = new testChart;
-    //     $chart->labels(['One', 'Two', 'Three', 'Four', 'Five']);
-    //     $chart->dataset('My dataset 1', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
-    //     $chart->dataset('My dataset 2', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
-
-    //     $pdf = \PDF::loadView('laravelCharts', compact('chart'));
-    //     return $pdf->download('test.pdf');
-
-    //     return view('laravelCharts', compact('chart'));
-
-    //     // $chart = new Frappe;
-    //     // $chart->labels(['One', 'Two', 'Three', 'Four', 'Five']);
-    //     // $chart->dataset('My dataset 1', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
-    //     // $chart->dataset('My dataset 2', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
-
-    //     // return view('laravelCharts', compact('chart'));
-    // }
-
-
-
     /**
     * Dispatches GenerateReportJob (generates and emails reports).
     *

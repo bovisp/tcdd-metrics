@@ -19,8 +19,18 @@ class CometListController extends Controller
         });
     }
 
+    function indexMSCFunded () {
+        $collection = collect(DB::connection('mysql')
+            ->select("SELECT *
+            FROM `comet_modules`
+            ORDER BY title"));
+
+        return $collection->each(function ($row) {
+            $row->description = $this->truncate($row->description);
+        });
+    }
+
     function update () {
-        // store new blacklist
         $data = request()->all();
         foreach($data as $row) {
             DB::connection('mysql')->table('comet_modules')
@@ -42,5 +52,17 @@ class CometListController extends Controller
           $string = rtrim($string[0], " ,") . $append;
         }
         return $string;
+    }
+
+    function updateMSCFunded () {
+        $data = request()->all();
+        foreach($data as $row) {
+            DB::connection('mysql')->table('comet_modules')
+            ->where('id', $row['id'])
+            ->update([
+                'msc_funded' => $row['msc_funded'],
+            ]);
+        }
+        return response('Successfully updated list of MSC-funded COMET modules.', 200);
     }
 }

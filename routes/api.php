@@ -61,7 +61,9 @@ Route::post('generate-pdf','CatalogController@downloadPDF');
 
 //comet list
 Route::get('comet-modules', 'CometListController@index');
+Route::get('comet-modules/msc-funded', 'CometListController@indexMSCFunded');
 Route::put('comet-modules', 'CometListController@update');
+Route::put('comet-modules/msc-funded', 'CometListController@updateMSCFunded');
 
 //tp list
 Route::get('tp-modules', 'TrainingPortalController@index');
