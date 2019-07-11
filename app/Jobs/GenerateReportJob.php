@@ -70,7 +70,7 @@ class GenerateReportJob implements ShouldQueue
         }
 
         //email spreadsheets
-        Mail::to('paul.bovis@canada.ca')->send(new TrainingMetricsReports($this->interval, $this->reportNames));
+        Mail::to('francis.wu@canada.ca')->send(new TrainingMetricsReports($this->interval, $this->reportNames));
 
         //delete spreadsheets from disk
         foreach($this->reportNames as $reportName) {

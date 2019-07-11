@@ -37,10 +37,10 @@ class Kernel extends ConsoleKernel
         
         // annually
         $subYearDateTime = Carbon::now()->subYear();
-        $schedule->job(new GenerateReportJob($subYearDateTime))->cron('0 6 1 1 *');
+        $schedule->job(new GenerateReportJob($subYearDateTime))->cron('0 6 1 4 *');
 
         // test
-        $schedule->job(new GenerateReportJob($subYearDateTime))->everyMinute();
+        // $schedule->job(new GenerateReportJob($subYearDateTime))->everyMinute();
     }
 
     /**
