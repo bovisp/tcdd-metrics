@@ -11,40 +11,6 @@ class ChartController extends Controller
 {
     public function index()
     {
-        // $chart = new testChart;
-        // $chart->labels(['One', 'Two', 'Three', 'Four', 'Five']);
-        // $chart->dataset('My dataset 1', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
-        // $chart->dataset('My dataset 2', 'bar', [rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000), rand(800,1000)]);
-
-        // $pdf = \PDF::loadView('laravelCharts', compact('chart'));
-        // return $pdf->download('test.pdf');
-        
-        // $stocksTable = \Lava::DataTable();
-
-        // $stocksTable->addStringColumn('Course')
-        // ->addNumberColumn('English')
-        // ->addNumberColumn('French');
-
-        // $stocksTable->addRow([
-        //     'One', rand(800,1000), rand(800,1000)
-        // ]);
-        // $stocksTable->addRow([
-        //     'Two', rand(800,1000), rand(800,1000)
-        // ]);
-        // $stocksTable->addRow([
-        //     'Three', rand(800,1000), rand(800,1000)
-        // ]);
-        // $stocksTable->addRow([
-        //     'Four', rand(800,1000), rand(800,1000)
-        // ]);
-        // $stocksTable->addRow([
-        //     'Five', rand(800,1000), rand(800,1000)
-        // ]);
-
-        // $columnChart = \Lava::ColumnChart('MyStocks', $stocksTable, [
-        //     'isStacked' => true
-        // ]);
-
         $html = '
             <<!DOCTYPE html>
             <html>

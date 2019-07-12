@@ -139,7 +139,7 @@ class CatalogController extends Controller
                 "name" => "Modules COMET financés par le MSC",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
                             FROM `comet_modules` ct
-                            WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
+                            WHERE ct.msc_funded = TRUE
                             AND ct.language_id = 2
                             ORDER BY ct.title"))
             ];
@@ -160,7 +160,7 @@ class CatalogController extends Controller
                 "name" => "MSC-funded COMET Modules",
                 "courses" => collect(DB::connection('mysql')->select("SELECT ct.id, ct.title as 'longTitle', ct.title as 'shortTitle', ct.publish_date as 'publishDate', ct. last_updated as 'lastUpdated', ct.completion_time as 'completionTime', ct.description as 'description', ct.topics, ct.url as 'URL'
                             FROM `comet_modules` ct
-                            WHERE ct.include_in_catalog = TRUE AND ct.msc_funded = TRUE
+                            WHERE ct.msc_funded = TRUE
                             AND ct.language_id = 1
                             ORDER BY ct.title"))
             ];
