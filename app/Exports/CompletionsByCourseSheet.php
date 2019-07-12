@@ -50,7 +50,8 @@ class CompletionsByCourseSheet implements FromCollection, WithTitle, WithHeading
         AND bi.dateissued BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
         AND c.category != 29
         AND c.visible != 0
-        GROUP BY mlg.id)";
+        GROUP BY mlg.id)
+        ORDER BY completions desc";
         
         $collection = collect(DB::connection('mysql2')->select($query));
         $formattedCollection = $this->formatTwoColumns($collection, 'english_course_name', 'french_course_name');

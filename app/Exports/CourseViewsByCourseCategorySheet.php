@@ -42,7 +42,8 @@ class CourseViewsByCourseCategorySheet implements FromCollection, WithTitle, Wit
             AND l.timecreated BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
             AND c.category != 29
             AND c.visible != 0
-            GROUP BY c.category";
+            GROUP BY c.category
+            ORDER BY course_views desc";
 
             $collection = collect(DB::connection('mysql2')->select($query));
 

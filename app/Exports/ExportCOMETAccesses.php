@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;

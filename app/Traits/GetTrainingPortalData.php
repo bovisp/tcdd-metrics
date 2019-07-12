@@ -22,7 +22,7 @@ trait GetTrainingPortalData {
     */
     private function getTrainingPortalViews($startTimestamp, $endTimestamp)
     {
-        $query = "SELECT l.courseid, cc.name 'english_category_name', cc.name 'french_category_name', c.fullname 'english_course_name', c.fullname 'french_course_name', lg.name as 'Language', count(*) as 'views'
+        $query = "SELECT l.courseid, cc.name 'english_category_name', cc.name 'french_category_name', c.fullname 'english_course_name', c.fullname 'french_course_name', lg.name as 'Language', count(l.courseid) as 'views'
         FROM mdl_logstore_standard_log l
         LEFT OUTER JOIN mdl_role_assignments a
             ON l.contextid = a.contextid
@@ -38,7 +38,8 @@ trait GetTrainingPortalData {
         AND l.timecreated BETWEEN {$startTimestamp} AND {$endTimestamp}
         AND c.category != 29
         AND c.visible != 0
-        GROUP BY l.courseid";
+        GROUP BY l.courseid
+        ORDER BY count(l.courseid) desc";
 
         $collection = collect(DB::connection('mysql2')->select($query));
         $formattedCollection = $this->formatTwoColumns($collection, 'english_course_name', 'french_course_name');
@@ -69,7 +70,7 @@ trait GetTrainingPortalData {
         AND c.category != 29
         AND c.visible != 0
         GROUP BY bi.badgeid
-        ORDER BY c.id";
+        ORDER BY count(bi.badgeid) desc";
 
         $collection = collect(DB::connection('mysql2')->select($query));
         $formattedCollection = $this->formatTwoColumns($collection, 'english_course_name', 'french_course_name');
