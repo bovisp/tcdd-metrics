@@ -2,14 +2,16 @@
 
 namespace App\Exports;
 
+use App\Traits\FormatCollection;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class ExportStayConnectedWebinars implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize
 {
+    use FormatCollection;
     /**
     * @return \Illuminate\Support\Collection
     */
@@ -25,43 +27,64 @@ class ExportStayConnectedWebinars implements FromCollection, WithTitle, WithHead
 
     public function collection()
     {
-        $cometCompletionsByModule = collect(DB::connection('mysql')->select("
-            SELECT ANY_VALUE(cmc.language) as 'language', cmc.module as 'englishTitle', 
-                   ANY_VALUE(cm2.title) as 'frenchTitle', 
-                   count(cmc.module) as 'englishCompletions', 
-                   count(cmc.module) as 'frenchCompletions',
-                   count(cmc.module) as 'totalCompletions'
-            FROM comet_completion cmc
-            LEFT OUTER JOIN `comet_modules` cm ON cmc.module = cm.title
-            LEFT OUTER JOIN `comet_modules` cm2 on cm.id = cm2.english_version_id
-            WHERE UNIX_TIMESTAMP(cmc.date_completed) BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
-            GROUP BY cmc.module
-            ORDER BY count(cmc.module) DESC
-        "));
+        // query below has to combine webinar views and webinar live attendance using a join across databases
+        //      to access a table in a different database, specify the database name before the table using dot syntax, e.g. `tcdd-metrics`.`webinar_attendance`
+        //      for views, use a similar query to the one in CourseViewsByCourseSheet, where category = 28 for Stay Connected
+        //      for attendance, query the webinar_attendance table
+        //      run query results through formatTwoColumns for correct english and french course names
+        // then the query results must be processed to combine the french views/attendance with the english views/attendance in one row for each course 
+        //      below is code doing something similar for COMET completions
+        // the headings array below shows the columns needed for the final collection
+        //      for views, use only one of the values from the rows for a course (either french or english)
+        // afterwards, uncomment the code in report types seeder and seed the db.
+        //      check if UI for generate report includes the new report type and sends a spreadsheet for it
 
-        foreach($cometCompletionsByModule as $x) {
-            if($x->frenchTitle) {
-                $frenchRow = $cometCompletionsByModule->where('englishTitle', '=', $x->frenchTitle)->first();
+
+        $webinarStats = collection(DB::connection('mysql2')->select("
+            SELECT wa.course_id, c.fullname 'english_course_name', c.fullname 'french_course_name', wa.language_id, wa.attendees as 'en_attendees', wa.attendees as 'fr_attendees', wa.attendees as 'total_attendees', count(l.courseid) as 'views'
+            FROM `tcdd-metrics`.`webinar_attendance` wa
+            INNER JOIN mdl_course c ON wa.course_id = c.id
+            LEFT OUTER JOIN mdl_logstore_standard_log l ON l.courseid = wa.course_id
+            LEFT OUTER JOIN mdl_role_assignments a
+                ON l.contextid = a.contextid
+                AND l.userid = a.userid
+            WHERE l.target = 'course'
+            AND l.action = 'viewed'
+            AND l.courseid > 1
+            AND (a.roleid IN (5, 6, 7) OR l.userid = 1)
+            AND l.timecreated BETWEEN {$this->startTimestamp} AND {$this->endTimestamp}
+            AND c.category = 28
+            AND c.visible != 0
+            GROUP BY wa.course_id, wa.language_id
+        "));
+        $formattedWebinarStats = $this->formatTwoColumns($webinarStats, 'english_course_name', 'french_course_name');
+
+        foreach($formattedWebinarStats as $x) {
+            if($x->language_id === 1) {
+                $frenchRow = $formattedWebinarStats->where('course_id', '=', $x->course_id)->where('language_id', '=', '2')->first();
                 if($frenchRow) {
-                    $frenchRowKey = $cometCompletionsByModule->search($frenchRow);
-                    $x->frenchCompletions = $frenchRow->frenchCompletions;
-                    unset($cometCompletionsByModule[$frenchRowKey]);
+                    $frenchRowKey = $formattedWebinarStats->search($frenchRow);
+                    $x->fr_attendees = $frenchRow->fr_attendees;
+                    unset($formattedWebinarStats[$frenchRowKey]);
                 } else {
-                    $x->frenchCompletions = 0;
+                    $x->fr_attendees = 0;
                 }
-            } else {
-                $x->frenchTitle = $x->englishTitle;
-                if(strtolower($x->language) === "french") {
-                    $x->englishCompletions = 0;
+            } elseif($x->language_id === 2) {
+                $englishRow = $formattedWebinarStats->where('course_id', '=', $x->course_id)->where('language_id', '=', '1')->first();
+                if($englishRow) {
+                    $englishRowKey = $formattedWebinarStats->search($englishRow);
+                    $x->en_attendees = $englishRow->er_attendees;
+                    unset($formattedWebinarStats[$englishRowKey]);
                 } else {
-                    $x->frenchCompletions = 0;
+                    $x->en_attendees = 0;
                 }
             }
-            $x->totalCompletions = $x->englishCompletions + $x->frenchCompletions;
-            unset($x->language);
+            $x->total_attendees = $x->en_attendees + $x->fr_attendees;
+            unset($x->language_id);
+            unset($x->course_id);
         };
         
-        return $cometCompletionsByModule;
+        return $formattedWebinarStats;
     }
 
     public function headings(): array
